@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Genesis - Creature Creator V2</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Merriweather:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Merriweather', serif;
+            background: linear-gradient(135deg, #1a0f2e 0%, #2d1b3d 50%, #0f1419 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+            50% { transform: translateY(-100px) translateX(50px); opacity: 0.6; }
+        }
+
+        .landing {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .landing h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 5rem;
+            font-weight: 700;
+            color: #9b59b6;
+            text-shadow: 0 0 20px rgba(155, 89, 182, 0.8), 0 0 40px rgba(155, 89, 182, 0.4);
+            margin-bottom: 1rem;
+            letter-spacing: 0.3rem;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px rgba(155, 89, 182, 0.8), 0 0 40px rgba(155, 89, 182, 0.4); }
+            50% { text-shadow: 0 0 30px rgba(155, 89, 182, 1), 0 0 60px rgba(155, 89, 182, 0.6); }
+        }
+
+        .landing p {
+            font-size: 1.8rem;
+            color: #b19cd9;
+            margin-bottom: 3rem;
+        }
+
+        .start-btn {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            padding: 1.5rem 4rem;
+            background: linear-gradient(135deg, #9b59b6, #6c3483);
+            border: 2px solid #9b59b6;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            box-shadow: 0 0 20px rgba(155, 89, 182, 0.5);
+            border-radius: 8px;
+        }
+
+        .start-btn:hover {
+            box-shadow: 0 0 40px rgba(155, 89, 182, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .creator {
+            display: none;
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .creator.active {
+            display: block;
+        }
+
+        .creator-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .creator-header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            color: #9b59b6;
+            text-shadow: 0 0 10px rgba(155, 89, 182, 0.6);
+        }
+
+        .creator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .traits-panel, .preview-panel {
+            background: rgba(45, 27, 61, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .trait-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(155, 89, 182, 0.2);
+        }
+
+        .trait-section:last-child {
+            border-bottom: none;
+        }
+
+        .trait-section h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: #9b59b6;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+        }
+
+        .trait-content {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .trait-value {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            color: #ccc;
+            font-size: 1rem;
+        }
+
+        .roll-btn {
+            font-family: 'Cinzel', serif;
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, #6c3483, #4a235a);
+            border: 1px solid #9b59b6;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .roll-btn:hover {
+            background: linear-gradient(135deg, #9b59b6, #6c3483);
+            transform: translateY(-2px);
+        }
+
+        .roll-all-btn {
+            width: 100%;
+            padding: 1.2rem;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .preview-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .name-input-section {
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        .name-input-section h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: #9b59b6;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .name-input-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .name-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            color: #e0e0e0;
+            font-family: 'Merriweather', serif;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .preview-card {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(155, 89, 182, 0.4);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .creature-name {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: #9b59b6;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(155, 89, 182, 0.6);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 400px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .image-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .placeholder-text {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .loading-animation {
+            width: 100px;
+            height: 100px;
+            border: 3px solid rgba(155, 89, 182, 0.3);
+            border-top: 3px solid #9b59b6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .create-btn, .regenerate-btn, .download-btn {
+            flex: 1;
+            font-family: 'Cinzel', serif;
+            padding: 1rem;
+            border: 1px solid #9b59b6;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 1rem;
+        }
+
+        .create-btn {
+            background: linear-gradient(135deg, #9b59b6, #6c3483);
+            color: #fff;
+        }
+
+        .regenerate-btn, .download-btn {
+            background: rgba(0, 0, 0, 0.5);
+            color: #9b59b6;
+            display: none;
+        }
+
+        .regenerate-btn:hover, .download-btn:hover, .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
+        }
+
+        .result {
+            display: none;
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .result.active {
+            display: block;
+        }
+
+        .result-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .result-header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            color: #9b59b6;
+            text-shadow: 0 0 20px rgba(155, 89, 182, 0.8);
+        }
+
+        .creature-card {
+            background: rgba(45, 27, 61, 0.8);
+            border: 2px solid rgba(155, 89, 182, 0.4);
+            border-radius: 20px;
+            padding: 3rem;
+        }
+
+        .card-top {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 500px;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid rgba(155, 89, 182, 0.3);
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .biography {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 3px solid #9b59b6;
+            margin-bottom: 2rem;
+        }
+
+        .biography h3 {
+            font-family: 'Cinzel', serif;
+            color: #9b59b6;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .biography p {
+            line-height: 1.8;
+            font-size: 1.1rem;
+            color: #d0d0d0;
+            font-style: normal;
+            font-weight: 400;
+        }
+
+        .attributes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .attribute {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(155, 89, 182, 0.3);
+        }
+
+        .attribute h4 {
+            font-family: 'Cinzel', serif;
+            color: #9b59b6;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .attribute p {
+            color: #bbb;
+            line-height: 1.6;
+        }
+
+        .result-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 3rem;
+            justify-content: center;
+        }
+
+        .result-btn {
+            font-family: 'Cinzel', serif;
+            padding: 1.2rem 3rem;
+            background: linear-gradient(135deg, #9b59b6, #6c3483);
+            border: 1px solid #9b59b6;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .back-btn {
+            background: rgba(0, 0, 0, 0.5);
+            color: #9b59b6;
+        }
+
+        @media (max-width: 1200px) {
+            .creator-grid, .card-top, .attributes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-particles" id="particles"></div>
+
+    <div class="landing" id="landing">
+        <h1>DARK GENESIS</h1>
+        <p>Forge your nightmare. One roll at a time.</p>
+        <button class="start-btn" onclick="showCreator()">Start Creating</button>
+    </div>
+
+    <div class="creator" id="creator">
+        <div class="creator-header">
+            <h1>CREATURE CREATOR</h1>
+        </div>
+        
+        <div class="creator-grid">
+            <div class="traits-panel">
+                <div class="trait-section">
+                    <h3>Core Monster Category</h3>
+                    <div class="trait-content">
+                        <div class="trait-value" id="category-value">Click roll to begin...</div>
+                        <button class="roll-btn" onclick="rollTrait('category')">Roll</button>
+                    </div>
+                </div>
+
+                <div class="trait-section">
+                    <h3>Physical Features</h3>
+                    <div class="trait-content">
+                        <div class="trait-value" id="physical-value">Click roll to begin...</div>
+                        <button class="roll-btn" onclick="rollTrait('physical')">Roll</button>
+                    </div>
+                </div>
+
+                <div class="trait-section">
+                    <h3>Personality / Behavior</h3>
+                    <div class="trait-content">
+                        <div class="trait-value" id="personality-value">Click roll to begin...</div>
+                        <button class="roll-btn" onclick="rollTrait('personality')">Roll</button>
+                    </div>
+                </div>
+
+                <div class="trait-section">
+                    <h3>Powers & Abilities</h3>
+                    <div class="trait-content">
+                        <div class="trait-value" id="powers-value">Click roll to begin...</div>
+                        <button class="roll-btn" onclick="rollTrait('powers')">Roll</button>
+                    </div>
+                </div>
+
+                <div class="trait-section">
+                    <h3>Weaknesses / Vulnerabilities</h3>
+                    <div class="trait-content">
+                        <div class="trait-value" id="weakness-value">Click roll to begin...</div>
+                        <button class="roll-btn" onclick="rollTrait('weakness')">Roll</button>
+                    </div>
+                </div>
+
+                <div class="trait-section">
+                    <h3>Origin / Backstory</h3>
+                    <div class="trait-content">
+                        <div class="trait-value" id="origin-value">Click roll to begin...</div>
+                        <button class="roll-btn" onclick="rollTrait('origin')">Roll</button>
+                    </div>
+                </div>
+
+                <div class="trait-section">
+                    <h3>Signature / Trophy</h3>
+                    <div class="trait-content">
+                        <div class="trait-value" id="signature-value">Click roll to begin...</div>
+                        <button class="roll-btn" onclick="rollTrait('signature')">Roll</button>
+                    </div>
+                </div>
+
+                <button class="roll-btn roll-all-btn" onclick="rollAll()">Roll All</button>
+            </div>
+
+            <div class="preview-panel">
+                <div class="name-input-section">
+                    <h3>Creature Name</h3>
+                    <div class="name-input-group">
+                        <input type="text" class="name-input" id="creature-name-input" placeholder="Enter name or generate...">
+                        <button class="roll-btn" onclick="generateName()">Generate</button>
+                    </div>
+                </div>
+
+                <div class="preview-card">
+                    <h2 class="creature-name" id="preview-name">Unnamed Horror</h2>
+                    <div class="image-placeholder" id="image-container">
+                        <span class="placeholder-text">Your creature awaits...</span>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="create-btn" onclick="createCreature()">Create Creature</button>
+                        <button class="regenerate-btn" id="regenerate-btn" onclick="regenerateImage()">Regenerate</button>
+                        <button class="download-btn" id="download-btn" onclick="downloadCard()">Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="result" id="result">
+        <div class="result-container">
+            <div class="result-header">
+                <h1 id="result-creature-name">The Horror Awakens</h1>
+            </div>
+            
+            <div class="creature-card">
+                <div class="card-top">
+                    <div class="card-image" id="result-image-container">
+                        <img src="" alt="Creature" id="result-image">
+                    </div>
+                    <div class="card-info">
+                        <h2 id="result-name-display" style="font-family:'Cinzel';font-size:2.5rem;color:#9b59b6;margin-bottom:2rem;"></h2>
+                        <div class="biography">
+                            <h3>Biography</h3>
+                            <p id="biography-text"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="attributes-grid" id="attributes-container"></div>
+            </div>
+
+            <div class="result-buttons">
+                <button class="result-btn back-btn" onclick="backToCreator()">Create Another</button>
+                <button class="result-btn" onclick="regenerateImage()">Regenerate Image</button>
+                <button class="result-btn" onclick="downloadCard()">Download Card</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const creatureData = {
+            category: ["Ghost / Vengeful Spirit", "Demon / Hellspawn", "Undead Abomination", "Vampire Lord", "Werecreature / Shapeshifter", "Alien Entity", "Mutant Experiment", "Deep Sea Leviathan", "Ancient Warlock", "Possessed Marionette"],
+            physical: ["Glowing crimson eyes with translucent skin revealing pulsing veins and elongated claws dripping with ichor", "Dozens of unblinking eyes covering its torso with jagged bone spikes erupting from its spine", "Cracked porcelain skin with a jaw that unhinges revealing rows of needle-sharp teeth and shadowy tendrils for hair", "Crystalline growths pulsing with inner light and skeletal wings of tattered membrane", "Multiple faces embedded in its flesh whispering ancient secrets with arms that stretch unnaturally long", "Body stitched together with barbed wire featuring a hollow chest filled with swirling darkness and reversed fingers", "Skin etched with glowing arcane runes having spider-like legs erupting from its back and metallic bones beneath flesh", "Constantly shifting and reforming flesh with eyes that weep black tears and a ribcage that opens like jaws", "Transparent body revealing all internal organs with moth-like wings covered in eyes and a forked serpentine tongue", "Head replaced by a flickering lantern with an exposed heart glowing through its chest and limbs wrapped in living chains"],
+            personality: ["Sadistic and playful creature that toys with its victims before delivering the final strike", "Silent stalker that observes its prey for days while learning their patterns and habits", "Vengeful spirit obsessed with punishing the guilty and those who have sinned", "Melancholic entity that regrets every kill but cannot stop its cursed nature", "Cunning manipulator that turns allies against each other through deception", "Chaotic destroyer driven by pure rage and an eternal hatred for all living things", "Curious observer of humanity that studies its victims like scientific specimens", "Mysterious being that speaks only in riddles and backward prophecies", "Obsessive collector of trophies and memories from each of its victims", "Confused creature that believes it is still human despite its monstrous urges"],
+            powers: ["Shadow duplication allowing it to create horrific copies of itself from pure darkness", "Dream walking enabling it to invade and kill victims within their own nightmares", "Possession ability that takes control of minds while leaving victims aware but helpless", "Phase shifting power to walk through solid walls and become intangible at will", "Fear projection that feeds on terror and grows stronger from victims' mounting dread", "Blood manipulation granting control over the blood within all living creatures", "Memory leeching through touch that steals or completely erases memories", "Reality distortion that warps perception making victims see nightmares as reality", "Regeneration allowing it to rapidly heal from any wound making it nearly immortal", "Telepathic whispers that implant maddening thoughts directly into victims' minds"],
+            weakness: ["Sunlight causes its flesh to burn and petrify into ash upon contact", "Silver weapons completely nullify its regeneration and cause grievous wounds", "Cannot cross running water or enter dwellings without a proper invitation", "Must feed nightly on fear or it will turn to dust by dawn", "Bound to its summoning location and cannot stray far from its birthplace", "Speaking its true name aloud will shatter its physical form instantly", "Fire purifies its corruption and is the only thing it truly fears", "Vulnerable only when seen in mirrors or other reflective surfaces", "Holy ground actively repels it and causes intense agony upon approach", "Its heart is located outside its body in a hidden relic that must be destroyed"],
+            origin: ["Born from a catastrophic ritual gone horribly wrong and now cursed to eternally hunger", "An ancient guardian awakened after millennia of slumber beneath long-forgotten ruins", "A manifestation of collective human fear and guilt that has been given horrific physical form", "A failed government experiment that escaped from a facility buried deep underground", "Summoned by forbidden texts and bound to serve but twisted by centuries of resentment", "Emerged from an abyssal ocean trench where the barrier between realities grows thin", "A spirit trapped between worlds after a violent and completely unresolved death", "An alien parasite that merged with its host creating something neither human nor alien", "Created by nuclear mutation in the aftermath of catastrophic radiation exposure", "A witch's curse given flesh that seeks vengeance across multiple generations"],
+            signature: ["Leaves intricate carved runes in the flesh of all its victims", "Collects the eyes of those it kills and preserves them in glass jars", "Replaces each victim with a wooden doll carved in their exact likeness", "Draws perfect circles of ash around every murder site it creates", "Drains all color from the surrounding area leaving only shades of gray", "Leaves behind black feathers that burn painfully to the touch", "Arranges bones into intricate and disturbing geometric patterns", "Writes cryptic prophecies in blood on nearby walls and surfaces", "Steals one specific item from each victim such as lockets or photographs", "Victims are found with expressions of pure terror frozen on their faces"]
+        };
+
+        const namePrefixes = ["Mor", "Zar", "Kael", "Vex", "Dra", "Nym", "Vor", "Ash", "Xer", "Vel"];
+        const nameSuffixes = ["oth", "ath", "eth", "rath", "vorn", "thir", "gorn", "kar", "dros", "ion"];
+        const titles = ["The Warden of Echoes", "The Shattered Choir", "Queen of Rust", "The Hollowed Prophet", "Bringer of Silence", "The Eternal Mourner", "Devourer of Light", "The Crimson Shepherd", "Keeper of Forgotten Names", "The Thirsting Shadow"];
+
+        let currentTraits = { category: null, physical: null, personality: null, powers: null, weakness: null, origin: null, signature: null };
+        let currentName = "";
+        let currentImage = "";
+        let currentBio = "";
+
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 100 + 50 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        createParticles();
+
+        function showCreator() {
+            document.getElementById('landing').style.display = 'none';
+            document.getElementById('creator').classList.add('active');
+        }
+
+        function rollTrait(trait) {
+            const data = creatureData[trait];
+            const random = data[Math.floor(Math.random() * data.length)];
+            currentTraits[trait] = random;
+            document.getElementById(`${trait}-value`).textContent = random;
+        }
+
+        function rollAll() {
+            Object.keys(creatureData).forEach(trait => rollTrait(trait));
+        }
+
+        function generateName() {
+            const useTitle = Math.random() < 0.25;
+            if (useTitle) {
+                currentName = titles[Math.floor(Math.random() * titles.length)];
+            } else {
+                const prefix = namePrefixes[Math.floor(Math.random() * namePrefixes.length)];
+                const suffix = nameSuffixes[Math.floor(Math.random() * nameSuffixes.length)];
+                currentName = prefix + suffix;
+            }
+            document.getElementById('creature-name-input').value = currentName;
+            document.getElementById('preview-name').textContent = currentName;
+        }
+
+        document.getElementById('creature-name-input').addEventListener('input', function(e) {
+            currentName = e.target.value || "Unnamed Horror";
+            document.getElementById('preview-name').textContent = currentName;
+        });
+
+        function generateBiography() {
+            currentBio = `The creature known as ${currentName} is ${currentTraits.category ? 'a ' + currentTraits.category.toLowerCase() : 'an ancient horror'}. ${currentTraits.origin || 'Its origin remains shrouded in mystery'}. The creature possesses ${currentTraits.physical ? currentTraits.physical.toLowerCase() : 'nightmarish features'}. Those who encounter it rarely survive to tell the tale. It is ${currentTraits.personality ? currentTraits.personality.toLowerCase() : 'merciless in its hunt'} and wields the terrifying power of ${currentTraits.powers ? currentTraits.powers.toLowerCase() : 'unknown supernatural abilities'}. ${currentTraits.signature || 'It leaves no trace of its victims'}. Ancient texts warn that ${currentTraits.weakness ? currentTraits.weakness.toLowerCase() : 'no weakness has been discovered'}.`;
+            return currentBio;
+        }
+
+        function generateImagePrompt() {
+            return `Full body portrait showing complete head and body of ${currentTraits.category || 'horror creature'}, photorealistic horror art, ${currentTraits.physical || 'terrifying features'}, ${currentTraits.personality || 'menacing'} demeanor, wielding ${currentTraits.powers || 'dark powers'}, cinematic lighting, ultra detailed 8K, dark fantasy horror, complete figure visible from head to toe, professional concept art`;
+        }
+
+        async function createCreature() {
+            if (!document.getElementById('creature-name-input').value) {
+                generateName();
+            }
+            currentName = document.getElementById('creature-name-input').value || currentName;
+            
+            const unrolled = Object.values(currentTraits).filter(v => v === null);
+            if (unrolled.length > 0) {
+                alert('Please roll all traits before creating your creature!');
+                return;
+            }
+
+            const imageContainer = document.getElementById('image-container');
+            imageContainer.innerHTML = '<div class="loading-animation"></div>';
+            
+            generateBiography();
+            
+            document.getElementById('regenerate-btn').style.display = 'block';
+            document.getElementById('download-btn').style.display = 'block';
+            
+            showResult();
+            
+            const prompt = generateImagePrompt();
+            console.log('🎨 Generating:', prompt);
+            
+            // Try Pollinations.ai first
+            const enhancedPrompt = `${prompt}, full body visible, complete head showing, professional horror art, 8k quality, terrifying design`;
+            const negativePrompt = 'cropped head, cut off, partial body, cartoon, anime, cute, bright colors, low quality, blurry';
+            
+            const encodedPrompt = encodeURIComponent(enhancedPrompt);
+            const encodedNegative = encodeURIComponent(negativePrompt);
+            const seed = Math.floor(Math.random() * 1000000);
+            
+            // PRIMARY: Pollinations.ai
+            currentImage = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=768&height=1024&seed=${seed}&nologo=true&negative=${encodedNegative}`;
+            
+            // BACKUP: If Pollinations fails, use Hugging Face
+            const backupImage = `https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0`;
+            
+            console.log('🔗 Image URL:', currentImage);
+            console.log('⏳ Loading image... (this may take 10-15 seconds)');
+            
+            const resultImage = document.getElementById('result-image');
+            resultImage.src = currentImage;
+            
+            const imgPreview = document.createElement('img');
+            imgPreview.src = currentImage;
+            imgPreview.alt = currentName;
+            imgPreview.style.width = '100%';
+            imgPreview.style.height = '100%';
+            imgPreview.style.objectFit = 'contain';
+            
+            let loadTimeout = setTimeout(() => {
+                console.log('⚠️ Image taking longer than expected...');
+                imageContainer.innerHTML = '<span class="placeholder-text">Still loading... Please wait 15 seconds or click Regenerate</span>';
+            }, 15000);
+            
+            imgPreview.onload = function() {
+                clearTimeout(loadTimeout);
+                console.log('✅ Image loaded successfully!');
+                imageContainer.innerHTML = '';
+                imageContainer.appendChild(imgPreview);
+            };
+            
+            imgPreview.onerror = function() {
+                clearTimeout(loadTimeout);
+                console.error('❌ Pollinations.ai failed - might be rate limited');
+                imageContainer.innerHTML = '<span class="placeholder-text">⚠️ Image service temporarily unavailable. Wait 10 minutes or try Regenerate.</span>';
+                alert('Image service might be rate-limited. Please:\n\n1. Wait 10-15 minutes\n2. Click "Regenerate Image"\n3. Or create a new creature\n\nPollinations.ai has usage limits per hour.');
+            };
+        }
+
+        async function regenerateImage() {
+            const imageContainer = document.getElementById('image-container');
+            const resultImageContainer = document.getElementById('result-image-container');
+            
+            if (document.getElementById('result').classList.contains('active')) {
+                resultImageContainer.innerHTML = '<div class="loading-animation"></div>';
+            } else {
+                imageContainer.innerHTML = '<div class="loading-animation"></div>';
+            }
+            
+            const prompt = generateImagePrompt();
+            const enhancedPrompt = `${prompt}, full body visible, complete head showing, professional horror art`;
+            const negativePrompt = 'cropped head, cut off, partial body, cartoon, anime, cute';
+            
+            const encodedPrompt = encodeURIComponent(enhancedPrompt);
+            const encodedNegative = encodeURIComponent(negativePrompt);
+            const seed = Math.floor(Math.random() * 1000000);
+            
+            currentImage = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=768&height=1024&seed=${seed}&nologo=true&negative=${encodedNegative}`;
+            
+            const img = new Image();
+            
+            img.onload = function() {
+                if (document.getElementById('result').classList.contains('active')) {
+                    resultImageContainer.innerHTML = `<img src="${currentImage}" alt="${currentName}" id="result-image" style="width:100%;height:100%;object-fit:contain;">`;
+                } else {
+                    imageContainer.innerHTML = '';
+                    const displayImg = document.createElement('img');
+                    displayImg.src = currentImage;
+                    displayImg.alt = currentName;
+                    displayImg.style.width = '100%';
+                    displayImg.style.height = '100%';
+                    displayImg.style.objectFit = 'contain';
+                    imageContainer.appendChild(displayImg);
+                }
+            };
+            
+            img.onerror = function() {
+                alert('Failed to regenerate. Try again.');
+            };
+            
+            img.src = currentImage;
+        }
+
+        function showResult() {
+            document.getElementById('creator').classList.remove('active');
+            document.getElementById('result').classList.add('active');
+            
+            document.getElementById('result-creature-name').textContent = currentName;
+            document.getElementById('result-name-display').textContent = currentName;
+            document.getElementById('result-image').src = currentImage;
+            document.getElementById('biography-text').textContent = currentBio;
+            
+            const attributesContainer = document.getElementById('attributes-container');
+            attributesContainer.innerHTML = `
+                <div class="attribute">
+                    <h4>Category</h4>
+                    <p>${currentTraits.category}</p>
+                </div>
+                <div class="attribute">
+                    <h4>Physical Features</h4>
+                    <p>${currentTraits.physical}</p>
+                </div>
+                <div class="attribute">
+                    <h4>Personality</h4>
+                    <p>${currentTraits.personality}</p>
+                </div>
+                <div class="attribute">
+                    <h4>Powers & Abilities</h4>
+                    <p>${currentTraits.powers}</p>
+                </div>
+                <div class="attribute">
+                    <h4>Weaknesses</h4>
+                    <p>${currentTraits.weakness}</p>
+                </div>
+                <div class="attribute">
+                    <h4>Origin</h4>
+                    <p>${currentTraits.origin}</p>
+                </div>
+                <div class="attribute">
+                    <h4>Signature</h4>
+                    <p>${currentTraits.signature}</p>
+                </div>
+            `;
+        }
+
+        function backToCreator() {
+            document.getElementById('result').classList.remove('active');
+            document.getElementById('creator').classList.add('active');
+            
+            Object.keys(currentTraits).forEach(key => currentTraits[key] = null);
+            document.querySelectorAll('.trait-value').forEach(el => {
+                el.textContent = 'Click roll to begin...';
+            });
+            document.getElementById('creature-name-input').value = '';
+            document.getElementById('preview-name').textContent = 'Unnamed Horror';
+            document.getElementById('image-container').innerHTML = '<span class="placeholder-text">Your creature awaits...</span>';
+            document.getElementById('regenerate-btn').style.display = 'none';
+            document.getElementById('download-btn').style.display = 'none';
+        }
+
+        async function downloadCard() {
+            try {
+                const cardHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${currentName} - Dark Genesis Creature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Merriweather', serif;
+            background: linear-gradient(135deg, #1a0f2e 0%, #2d1b3d 50%, #0f1419 100%);
+            color: #e0e0e0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            text-align: center;
+            background: rgba(45, 27, 61, 0.8);
+            padding: 30px;
+            border-radius: 20px;
+            border: 3px solid #9b59b6;
+            margin-bottom: 30px;
+        }
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            color: #9b59b6;
+            text-shadow: 0 0 20px rgba(155, 89, 182, 0.8);
+        }
+        .card-content {
+            display: grid;
+            grid-template-columns: 500px 1fr;
+            gap: 30px;
+            background: rgba(45, 27, 61, 0.8);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid rgba(155, 89, 182, 0.4);
+        }
+        .creature-image {
+            width: 100%;
+            height: 600px;
+            border-radius: 15px;
+            border: 3px solid #9b59b6;
+            overflow: hidden;
+        }
+        .creature-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .bio-box {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 4px solid #9b59b6;
+            margin-bottom: 20px;
+        }
+        .bio-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: #9b59b6;
+            margin-bottom: 15px;
+        }
+        .bio-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #d0d0d0;
+        }
+        .attributes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .attr-box {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(155, 89, 182, 0.3);
+        }
+        .attr-label {
+            font-family: 'Cinzel', serif;
+            color: #9b59b6;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .attr-value {
+            color: #bbb;
+            line-height: 1.5;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(45, 27, 61, 0.6);
+            border-radius: 15px;
+            border: 1px dashed #9b59b6;
+        }
+        @media print { .footer { display: none; } }
+        @media (max-width: 1024px) {
+            .card-content { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">🔥 ${currentName} 🔥</div>
+        </div>
+        
+        <div class="card-content">
+            <div class="creature-image">
+                <img src="${currentImage}" alt="${currentName}">
+            </div>
+            
+            <div>
+                <div class="bio-box">
+                    <div class="bio-title">📜 Biography</div>
+                    <div class="bio-text">${currentBio}</div>
+                </div>
+                
+                <div class="attributes">
+                    <div class="attr-box">
+                        <div class="attr-label">Category</div>
+                        <div class="attr-value">${currentTraits.category}</div>
+                    </div>
+                    <div class="attr-box">
+                        <div class="attr-label">Physical Features</div>
+                        <div class="attr-value">${currentTraits.physical}</div>
+                    </div>
+                    <div class="attr-box">
+                        <div class="attr-label">Personality</div>
+                        <div class="attr-value">${currentTraits.personality}</div>
+                    </div>
+                    <div class="attr-box">
+                        <div class="attr-label">Powers</div>
+                        <div class="attr-value">${currentTraits.powers}</div>
+                    </div>
+                    <div class="attr-box">
+                        <div class="attr-label">Weaknesses</div>
+                        <div class="attr-value">${currentTraits.weakness}</div>
+                    </div>
+                    <div class="attr-box">
+                        <div class="attr-label">Origin</div>
+                        <div class="attr-value">${currentTraits.origin}</div>
+                    </div>
+                    <div class="attr-box">
+                        <div class="attr-label">Signature</div>
+                        <div class="attr-value">${currentTraits.signature}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>💡 To Save as PDF:</strong> Press <strong>Ctrl+P</strong> (Windows) or <strong>Cmd+P</strong> (Mac)</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+                const blob = new Blob([cardHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${currentName.replace(/\s+/g, '_')}_Creature_Card.html`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+
+                alert(`✅ Card downloaded!\n\n"${currentName}_Creature_Card.html"\n\nOpen it and press Ctrl+P to save as PDF!`);
+
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('❌ Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
