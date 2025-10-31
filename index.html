@@ -1392,10 +1392,234 @@ Ultra detailed, 8K quality, dark fantasy horror aesthetic, volumetric lighting, 
             document.getElementById('download-btn').style.display = 'none';
         }
 
-        // Download card
-        function downloadCard() {
-            alert(`Download feature would save:\n\nName: ${currentName}\n\nImage: ${currentImage}\n\nBiography: ${currentBio}\n\nAll attributes included!\n\n(In production, this would generate a PNG/PDF)`);
+       // Download card - saves an HTML file containing the creature card (tries to embed image)
+async function downloadCard() {
+    // helper: sanitize file name
+    function safeFilename(name) {
+        return (name || 'creature').replace(/[^a-z0-9_\-]/gi, '_').substring(0, 120);
+    }
+
+    // helper: try to fetch image and convert to data URL (returns null on failure)
+    async function fetchImageAsDataURL(url) {
+        if (!url) return null;
+        try {
+            const resp = await fetch(url, { mode: 'cors' });
+            if (!resp.ok) throw new Error('Image fetch failed');
+            const blob = await resp.blob();
+            return await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        } catch (err) {
+            console.warn('Could not embed image as data URL (CORS or network):', err);
+            return null;
         }
+    }
+
+    // Build attributes HTML
+    function buildAttributesHTML(traits) {
+        if (!traits) return '';
+        const fields = [
+            {label: 'Category', value: traits.category || '—'},
+            {label: 'Tier', value: traits.tier ? (traits.tier.name || traits.tier) : '—'},
+            {label: 'Physical Features', value: traits.physical || '—'},
+            {label: 'Origin', value: traits.origin || '—'},
+            {label: 'Powers & Abilities', value: traits.powers || '—'},
+            {label: 'Weakness', value: traits.weakness || '—'},
+            {label: 'Personality', value: traits.personality || '—'},
+            {label: 'Setting / Domain', value: traits.setting || '—'},
+            {label: 'Sound & Atmosphere', value: traits.sound || '—'},
+            {label: 'Signature', value: traits.signature || '—'}
+        ];
+        return fields.map(f => `<p><strong>${f.label}:</strong> ${f.value}</p>`).join('\n');
+    }
+
+    // Compose the HTML document
+    const embedDataUrl = await fetchImageAsDataURL(currentImage);
+    const imgSrc = embedDataUrl || (currentImage || '');
+    const attributesHtml = buildAttributesHTML(currentTraits);
+    const nameEscaped = currentName || 'Unnamed_Horror';
+    const now = new Date().toISOString();
+
+    const htmlDoc = `
+/* 🌙 MOBILE-FRIENDLY FIXES */
+@media (max-width: 900px) {
+    .landing h1 {
+        font-size: 3rem;
+        letter-spacing: 0.1rem;
+    }
+
+    .landing p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .start-btn {
+        font-size: 1.2rem;
+        padding: 1rem 2.5rem;
+    }
+
+    .creator-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    .traits-panel, .preview-panel {
+        padding: 1.2rem;
+    }
+
+    .trait-section h3 {
+        font-size: 1.1rem;
+    }
+
+    .trait-value {
+        font-size: 0.9rem;
+        min-height: 40px;
+        padding: 0.8rem;
+    }
+
+    .roll-btn {
+        font-size: 0.8rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .preview-card {
+        max-width: 100%;
+        padding: 1rem;
+    }
+
+    .creature-name {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .image-placeholder {
+        height: 250px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .create-btn, .regenerate-btn, .download-btn {
+        font-size: 0.9rem;
+        padding: 0.8rem;
+    }
+
+    .result-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .card-top {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .card-image {
+        height: 300px;
+    }
+
+    .biography h3 {
+        font-size: 1.1rem;
+    }
+
+    .biography p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .attributes-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .attribute {
+        padding: 1rem;
+    }
+
+    .result-buttons {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .result-btn {
+        width: 100%;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 500px) {
+    .landing h1 {
+        font-size: 2.2rem;
+    }
+
+    .landing p {
+        font-size: 1rem;
+    }
+
+    .start-btn {
+        font-size: 1rem;
+        padding: 0.8rem 2rem;
+    }
+
+    .image-placeholder {
+        height: 220px;
+    }
+
+    .preview-card {
+        padding: 0.8rem;
+    }
+
+    .creator-header h1 {
+        font-size: 2rem;
+    }
+}
+
+</style>
+</head>
+<body>
+<div class="card">
+    <h1>${escapeHtml(currentName || 'Unnamed Horror')}</h1>
+    <div class="image">${ imgSrc ? `<img src="${imgSrc}" alt="${escapeHtml(currentName || '')}">` : '<div style="padding:40px;text-align:center;color:#888">No image available</div>' }</div>
+    <div class="bio">${escapeHtml(currentBio || '')}</div>
+    <div class="attrs">
+        ${attributesHtml}
+    </div>
+    <footer>Exported from Dark Genesis — ${now}</footer>
+</div>
+</body>
+</html>`.trim();
+
+    // Create the blob and force download
+    const filename = `DarkGenesis_${safeFilename(currentName)}.html`;
+    const blob = new Blob([htmlDoc], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    // release object URL after short delay
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+
+    alert('Downloaded card: ' + filename + (embedDataUrl ? '\n\nImage embedded in file.' : '\n\nImage referenced by URL (embedding failed due to CORS).'));
+
+    // small helper: escape HTML for interpolation
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+}
+
     </script>
 </body>
 </html>
