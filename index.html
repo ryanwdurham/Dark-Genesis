@@ -580,17 +580,220 @@
         const HF_TEXT_MODEL = 'meta-llama/Llama-3.2-3B-Instruct';
 
         const creatureData = {
-            category: ["Ghost / Vengeful Spirit","Demon / Hellspawn","Undead Abomination","Vampire Lord","Werecreature / Shapeshifter","Alien Entity","Mutant Experiment","Deep Sea Leviathan","Ancient Warlock","Possessed Marionette"],
-            physical: ["Glowing crimson eyes, translucent skin revealing pulsing veins, elongated claws dripping ichor","Dozens of unblinking eyes covering its torso, jagged bone spikes erupting from spine","Cracked porcelain skin, jaw that unhinges revealing rows of needle teeth, shadowy tendrils for hair","Crystalline growths pulsing with inner light, skeletal wings of tattered membrane","Multiple faces embedded in flesh whispering secrets, arms that stretch unnaturally long","Body stitched together with barbed wire, hollow chest with swirling darkness, reversed fingers","Skin etched with glowing arcane runes, spider-like legs erupting from back, metallic bones beneath flesh","Constantly shifting and reforming flesh, eyes that weep black tears, ribcage that opens like jaws","Transparent body revealing organs, moth-like wings with eyes upon them, forked serpentine tongue","Head replaced by flickering lantern, exposed heart glowing through chest, limbs wrapped in living chains"],
-            origin: ["Born from a catastrophic ritual gone wrong, cursed to eternally hunger","Ancient guardian awakened after millennia of slumber beneath forgotten ruins","Manifestation of collective human fear and guilt, given horrific form","Failed government experiment, escaped from a facility buried deep underground","Summoned by forbidden texts, bound to serve but twisted by resentment","Emerged from an abyssal ocean trench where reality grows thin","Spirit trapped between worlds after a violent, unresolved death","Alien parasite that merged with its host, creating something neither","Created by nuclear mutation in the aftermath of catastrophic radiation","Witch's curse given flesh, seeking vengeance across generations"],
-            powers: ["Shadow duplication - creates horrific copies of itself from darkness","Dream walking - invades and kills victims within their nightmares","Possession - takes control of minds, leaving victims aware but helpless","Phase shifting - walks through solid walls and becomes intangible","Fear projection - feeds on terror, growing stronger from victims' dread","Blood manipulation - controls the blood within living creatures","Memory leeching - steals or erases memories with a touch","Reality distortion - warps perception, making victims see nightmares as reality","Regeneration - rapidly heals from any wound, nearly immortal","Telepathic whispers - implants maddening thoughts directly into minds"],
-            weakness: ["Sunlight causes its flesh to burn and petrify into ash","Silver weapons nullify its regeneration and cause grievous wounds","Cannot cross running water or enter without invitation","Must feed nightly on fear or turns to dust by dawn","Bound to its summoning location, cannot stray far from birthplace","True name spoken aloud shatters its physical form","Fire purifies its corruption, the only thing it truly fears","Vulnerable only when seen in mirrors or reflective surfaces","Holy ground repels it, causing intense agony upon approach","Heart located outside body in hidden relic - destroy to kill permanently"],
-            personality: ["Sadistic and playful, toys with victims before the final strike","Silent stalker that observes prey for days, learning their patterns","Vengeful spirit obsessed with punishing the guilty and sinners","Melancholic entity that regrets every kill but cannot stop its nature","Cunning manipulator that turns allies against each other","Chaotic destroyer driven by pure rage and hatred for the living","Curious observer of humanity, studies victims like specimens","Speaks only in riddles and backward prophecies","Collects trophies and memories from each victim obsessively","Believes it is still human, confused by its monstrous urges"],
-            setting: ["Abandoned asylum with corridors that shift and change","Fog-shrouded graveyard where the dead whisper warnings","Ancient cathedral ruins beneath which darker things dwell","Cursed forest where trees bleed and shadows move independently","Derelict space station drifting through the cosmic void","Deep ocean trench where pressure and darkness reign eternal","Decaying carnival grounds frozen in perpetual midnight","Mirror realm accessible only through reflections at certain hours","Subterranean laboratory complex filled with failed experiments","Burned village that exists simultaneously in past and present"],
-            signature: ["Leaves carved runes in the flesh of victims","Collects the eyes of those it kills, preserving them in jars","Replaces victims with wooden dolls in their exact likeness","Draws circles of ash around murder sites","Drains all color from the area, leaving only grayscale","Leaves behind black feathers that burn to the touch","Arranges bones into intricate geometric patterns","Writes prophecies in blood on nearby walls","Steals one specific item from each victim like lockets or photographs","Victims found with expressions of pure terror frozen on faces"]
+            category: [ "Infernal Beast", "Undead Lich", "Mechanical Horror", "Spectral Phantom", "Flesh Weaver", "Corrupted Angel",  "Plague Harbinger", "Rot Priest", "Cursed Knight", "Bound Shade", "Bone Witch", "Soul Parasite","Flesh Burrower", 
+"Crimson Phantom","Ghost / Vengeful Spirit","Demon / Hellspawn","Undead Abomination","Vampire Lord","Werecreature / Shapeshifter","Alien Entity","Mutant Experiment","Deep Sea Leviathan","Ancient Warlock","Possessed Marionette"],
+            physical: [ "Head encased in a glass orb filled with swirling mist and ghostly faces",
+"Torso split open by a vertical mouth that whispers in forgotten tongues",
+"Hands elongated into bone scythes dripping molten lava",
+"Pale wings of smoke that vanish when light touches them",
+"Veins glow faintly blue beneath translucent stone-like flesh",
+"Face constantly rearranging, never holding one expression for more than 5 seconds",
+"Body wrapped in thorned vines that move as if alive",
+
+"Torso covered in ritual brands that flicker like embers when it breathes",
+"Entire body armored in black chitin, exoskeleton cracked and steaming",
+"Spine extends into a segmented tail tipped with an iron hook",
+"Eyeless head crowned by spiraling horns carved with sigils",
+"Skin glimmers with an oil-slick sheen, colors shifting like a dying sunset",
+
+"Body constantly dripping black sludge that evaporates into smoke",
+"Shadow moves separately from its body, lagging a few seconds behind",
+"Head splits open to reveal a second, smaller face within",
+"Body made of patchwork flesh of its victims, sewn with a magic golden thread",
+"Ribs extend outward, wrapping its body like a cage of bone and sinew",
+"Feet replaced by clawed tendrils that leave burning prints on the ground",
+"Flesh carved with runic scars that leak faint streams of light",
+"Eyes glow with shifting constellations, stars forming and dying within",
+
+"Jawbone split and hinged like insect mandibles, dripping black saliva",
+"Back crowned with candle-like spines that burn with ghostly flame",
+
+"Torso made of crystal shards that pulse like a heart when it breathes",
+"Face missing entirely, replaced by a swirling void that hums with whispers",
+"Translucent skin revealing a network of pulsing veins and crawling shadows",
+    "Elongated limbs that bend in impossible directions like broken marionette joints",
+    "Eyes that reflect not light, but scenes of distant suffering",
+    "Jaw splits open vertically, revealing rows of razor sharp teeth",
+    "Body covered in writhing runes that glow when it senses fear",
+    "Multiple faces shift across its head, each muttering secrets of the dead",
+    "Hands end in long black talons that drip a black liquid ooze",
+
+    "Head replaced by a floating mask that changes expression mid-battle",
+    "Torso stitched together from different species and worlds",
+   
+    "Mouths cover its arms, constantly murmuring half-formed prayers",
+    "A crown of living eyes grows from its skull, always watching",
+    "Skin ripples as if something beneath is trying to escape",
+    "Legs resemble those of a spider, clicking as it moves silently across walls",
+    "Veins glow faintly with bioluminescent ichor that pulses to its heartbeat",
+    "Its reflection never matches its true form, shifting each time it is seen",
+    "Claws drip freezing mist that burns instead of chills",
+    "Scales shimmer like oil on water, revealing hidden sigils when touched",
+    "Has no visible mouth, yet speaks directly into the mind",
+    "Wings of shredded flesh and bone that emit a low mechanical hum",
+    "Fingers endlessly grow and retract like searching tendrils",
+    "Head encased in glass filled with swirling fog and flickering lights",
+    "Spine juts outward forming jagged protrusions that twitch independently",
+    "Carries a scent of ozone, rust, and old blood wherever it goes",
+    "Skin appears carved from ancient stone, yet flexes like muscle",
+    "Blood flows upward, defying gravity and glowing faintly blue",
+    "One half of its body decays constantly while the other regenerates",
+    "Shadow moves before the body, reacting to unseen threats",
+    "Chest cavity opens like a door revealing a pulsating heart made of crystal",
+"Body encircled by floating bone fragments orbiting like satellites","Glowing crimson eyes, translucent skin revealing pulsing veins, elongated claws dripping ichor","Glowing crimson eyes, translucent skin revealing pulsing veins, elongated claws dripping ichor","Dozens of unblinking eyes covering its torso, jagged bone spikes erupting from spine","Cracked porcelain skin, jaw that unhinges revealing rows of needle teeth, shadowy tendrils for hair","Crystalline growths pulsing with inner light, skeletal wings of tattered membrane","Multiple faces embedded in flesh whispering secrets, arms that stretch unnaturally long","Body stitched together with barbed wire, hollow chest with swirling darkness, reversed fingers","Skin etched with glowing arcane runes, spider-like legs erupting from back, metallic bones beneath flesh","Constantly shifting and reforming flesh, eyes that weep black tears, ribcage that opens like jaws","Transparent body revealing organs, moth-like wings with eyes upon them, forked serpentine tongue","Head replaced by flickering lantern, exposed heart glowing through chest, limbs wrapped in living chains"],
+            origin: [ "Created by an ancient cult seeking immortality through suffering",
+   
+  
+    "A failed experiment by scientists who tried to weaponize fear itself",
+    "Manifested from collective guilt of an entire generation",
+    "Summoned accidentally by a child’s wish whispered into darkness",
+
+    "Emerges wherever time itself begins to decay and loop",
+    "Birthed from the tears of an angel who lost faith",
+    
+    "Rose from the ashes of a demon's corpse buried beneath the sea",
+    
+    
+   
+    "An echo from a future where humanity no longer exists",
+ 
+    "Created by alchemists who sought to perfect the soul ... and failed",
+    "Formed from shadows cast by the first sunrise after the apocalypse",
+    "A punishment from forgotten deities for mankind’s arrogance",
+    "Emerged from the event horizon of a collapsing dimension",
+    "Was once worshiped as a god, now it hunts those who forget its name",
+    "Grown from parasitic spores carried through the void between stars",
+    "A guardian spirit corrupted after centuries of neglect",
+    "Spawned when forbidden words were spoken in perfect sequence",
+    
+    "Born when two realities collided, leaving only madness behind",
+    "A failed resurrection that brought something else back instead",
+    "Appears wherever mass extinction is about to begin","Born from a catastrophic ritual gone wrong, cursed to eternally hunger","Ancient guardian awakened after millennia of slumber beneath forgotten ruins","Manifestation of collective human fear and guilt, given horrific form","Failed government experiment, escaped from a facility buried deep underground","Summoned by forbidden texts, bound to serve but twisted by resentment","Emerged from an abyssal ocean trench where reality grows thin","Spirit trapped between worlds after a violent, unresolved death","Alien parasite that merged with its host, creating something neither","Created by nuclear mutation in the aftermath of catastrophic radiation","Witch's curse given flesh, seeking vengeance across generations"],
+            powers: ["Obsidian wings - launches razor sharp feathers cutting everything in their path",
+    "Voidstep - slips through shadows and reappears behind its prey",
+    "Soul fracture - splits its soul into shards that hunt independently",
+    "Blood bloom - wounds erupt into black flowers that drain life",
+    "Echo scream - sound waves distort reality and shatter sanity",
+    "Temporal bleed - moments of the future leak into the present",
+    "Spectral consumption - devours ghosts to grow stronger",
+    "Corrosive aura - melts metal and flesh just by proximity",
+    "Mind shatter - floods thoughts with impossible geometries",
+    "Astral tether - binds enemies’ souls to its own body",
+    "Pulse of decay - ages everything it touches by centuries",
+    "Nightmare seed - plants fear inside dreams that grow real",
+    "Lament wail - forces all who hear it to relive their worst memory",
+    "Puppet veins - controls others by threading into their bloodstream",
+    "Silence field - cancels sound and emotion within its radius",
+    "Eclipse burst - cloaks the world in artificial night and shadow",
+    "Memory cage - traps victims in looping illusions of their past",
+    "Specter swarm - releases tiny ghosts that whisper from the dark",
+    "Aether blink - teleports between dimensions in flickering motion",
+    "Decay pulse - spreads rot like ripples through water and stone",
+    "Pain transference - heals itself by inflicting agony on others",
+    "Plasma chains - conjures burning energy whips forged from starlight",
+    "Wraithform - becomes mist and slides through solid matter", "Shadow duplication - creates horrific copies of itself from darkness","Dream walking - invades and kills victims within their nightmares","Possession - takes control of minds, leaving victims aware but helpless","Phase shifting - walks through solid walls and becomes intangible","Fear projection - feeds on terror, growing stronger from victims' dread","Blood manipulation - controls the blood within living creatures","Memory leeching - steals or erases memories with a touch","Reality distortion - warps perception, making victims see nightmares as reality","Regeneration - rapidly heals from any wound, nearly immortal","Telepathic whispers - implants maddening thoughts directly into minds"],
+            weakness: [ "Shatters into smoke when confronted with its own reflection",
+
+"Cannot harm those who speak its forgotten name in prayer",
+"Loses power when exposed to the sound of bells or chimes",
+"Turns blind and helpless when surrounded by pure salt",
+"Bound to shadows — if separated from them, it fades away",
+"Requires human memories to exist; forgetfulness weakens it",
+
+"Turns to stone when touched by untainted holy water",
+
+"Falls dormant when no one believes it exists",
+"Disintegrates when embraced by genuine love or compassion",
+"Cannot cross a circle of iron nails and blood",
+"Melts into dust when faced with its own guilt or remorse",
+"Bound to moonlight — destroyed when daylight touches it",
+"Weakens in silence; thrives only in screams and chaos",
+"Fades when seen by a child’s innocent eyes",
+"Power wanes when its true name is spoken by mortals",
+"Disappears at dawn, reborn only when its name is spoken again",
+"Can be sealed by writing its name backward in blood",
+"Falls into paralysis when confronted with symbols of love",
+"Cannot enter places of mourning or peace",
+"Shatters when struck by a weapon made from its own bones",
+"Dies permanently if tricked into laughing",
+"Flesh dissolves when touched by sacred fire or candlelight",
+"Becomes harmless when drenched in the tears of its victim",
+
+"Cannot move while being directly observed",
+
+"Only mortal when it feels fear — a state it avoids at all costs","Sunlight causes its flesh to burn and petrify into ash","Silver weapons nullify its regeneration and cause grievous wounds","Cannot cross running water or enter without invitation","Must feed nightly on fear or turns to dust by dawn","Bound to its summoning location, cannot stray far from birthplace","True name spoken aloud shatters its physical form","Fire purifies its corruption, the only thing it truly fears","Vulnerable only when seen in mirrors or reflective surfaces","Holy ground repels it, causing intense agony upon approach","Heart located outside body in hidden relic - destroy to kill permanently"],
+            personality: [ "Patient hunter that enjoys the fear more than the kill itself",
+    "Mocking trickster that imitates the voices of lost loved ones",
+    "Obsessed with perfection, reshaping victims into twisted art",
+    "Cold and calculating, views all life as pieces on a chessboard",
+    "Childlike demeanor hiding unspeakable cruelty",
+    "Ritualistic killer performing every act with ceremonial precision",
+    "Jealous of the living and seeks to replace them one by one",
+    "Protective of its territory, reacts violently to intrusion",
+    "Sad philosopher that questions its own existence after each kill",
+    "Collector of secrets, trades information for lives",
+    "Reclusive wanderer drawn to places of tragedy and despair",
+    "Fanatical zealot believing its murders serve a higher power",
+    "Narcissistic being that demands worship and fear from all who see it",
+    "Tormented soul reliving its own death through its victims",
+    "Playful deceiver that delights in confusing reality and illusion",
+    "Remorseless predator that views suffering as art",
+    "Guarded and territorial, only attacks when provoked or challenged",
+    "Obsessive archivist that records every scream and whisper",
+    "Quiet mourner who kills only to silence its own pain",
+    "Eloquent storyteller that charms before consuming its audience","Sadistic and playful, toys with victims before the final strike","Silent stalker that observes prey for days, learning their patterns","Vengeful spirit obsessed with punishing the guilty and sinners","Melancholic entity that regrets every kill but cannot stop its nature","Cunning manipulator that turns allies against each other","Chaotic destroyer driven by pure rage and hatred for the living","Curious observer of humanity, studies victims like specimens","Speaks only in riddles and backward prophecies","Collects trophies and memories from each victim obsessively","Believes it is still human, confused by its monstrous urges"],
+            setting: [ "Ruined castle overtaken by creeping black vines",
+    "Burned-down church where ghostly hymns still echo",
+
+"Collapsed cathedral buried beneath a modern city",
+   "Crimson forest where the trees bleed when cut",
+    "Forgotten mine shaft filled with bones and broken lanterns",
+    "Frozen wasteland haunted by the screams of the wind",
+    "Subterranean labyrinth carved from black stone and flesh",
+    "Desert ruins swallowed by endless sand and silence",
+    "Swamp of perpetual dusk where the water reflects faces of the dead",
+ "Abandoned research facility humming with strange power",
+    "Cursed village that reappears only under a blood moon",
+    "Endless hallway of mirrors that show alternate realities",
+"A Temple floating in the clouds, built for gods that no longer exist",
+"Orbiting ruin of an ancient alien ark drifting through space",
+"Cursed dream realm shared by the insane and the dead",
+    "Celestial library where books write themselves in living ink",
+    "Digital afterlife corrupted by the souls of extinct AIs",
+    "Endless stairwell descending through layers of forgotten time",
+"Abandoned asylum with corridors that shift and change","Fog-shrouded graveyard where the dead whisper warnings","Ancient cathedral ruins beneath which darker things dwell","Cursed forest where trees bleed and shadows move independently","Derelict space station drifting through the cosmic void","Deep ocean trench where pressure and darkness reign eternal","Decaying carnival grounds frozen in perpetual midnight","Mirror realm accessible only through reflections at certain hours","Subterranean laboratory complex filled with failed experiments","Burned village that exists simultaneously in past and present"],
+            signature: [ "Leaves behind symbols carved into stone or flesh wherever it kills",
+    "Whispers the victim’s name moments before appearing",
+    "Always accompanied by a faint childlike laughter echoing from nowhere",
+    "Its arrival dims all nearby lights, no matter the source",
+    "Victims’ eyes turn black and weep ash before death",
+    "Carries a faint scent of burned roses and wet earth",
+    "Summons flocks of crows that scatter when it’s near",
+    "Collects eyes and strings them together as trophies",
+    "Footsteps echo long after it’s gone, out of sync with movement",
+    "Blood turns to dust wherever it walks",
+    "Always leaves behind a single feather soaked in black ichor",
+    "Writes cryptic messages in the victim’s own handwriting",
+    "Freezes reflections in mirrors, leaving images that move independently",
+    
+    
+    
+    "Victims vanish completely, leaving only shadows burnt into walls",
+    "Marks its prey with a sigil that burns under moonlight",
+    "Always sings softly before striking, the tune changing each kill",
+    
+    "Leaves claw marks in perfect circular patterns around bodies",
+    "Victims are found smiling, as if welcoming death",
+    "Appears only in reflections before manifesting in reality",
+  
+    "Feeds but leaves no wounds, only an expression of terror",
+    "Its shadow moves independently, sometimes attacking first",
+    "Survivors claim to hear their own voices calling them toward it",
+    "Leaves trails of frost or burning embers depending on mood",
+    ,"Leaves carved runes in the flesh of victims","Collects the eyes of those it kills, preserving them in jars","Replaces victims with wooden dolls in their exact likeness","Draws circles of ash around murder sites","Drains all color from the area, leaving only grayscale","Leaves behind black feathers that burn to the touch","Arranges bones into intricate geometric patterns","Writes prophecies in blood on nearby walls","Steals one specific item from each victim like lockets or photographs","Victims found with expressions of pure terror frozen on faces"]
         };
 
-        const namePrefixes = ["Mor","Zar","Kael","Vex","Dra","Nym","Vor","Ash","Xer","Vel","Gor","Thal","Nyx","Vyr"];
+        const namePrefixes = ["Mor","Zar","Kael","Vex","Dra","Nym","Vor","Ash","Xer","Vel","Gor","Thal","Nyx","Vyr", "Ray", "Glam", "Xal",];
         const nameSuffixes = ["oth","ath","eth","rath","vorn","thir","gorn","kar","dros","ion","ax","ul","or","is"];
         const titles = ["The Warden of Echoes","The Shattered Choir","Queen of Rust","The Hollowed Prophet","Bringer of Silence","The Eternal Mourner","Devourer of Light","The Crimson Shepherd","Keeper of Forgotten Names","The Thirsting Shadow","The Pale Witness","Harbinger of Ash","The Bleeding Crown"];
 
@@ -710,20 +913,48 @@ Write in the epic style of Magic: The Gathering, Dark Souls, or H.P. Lovecraft. 
         }
 
         function generateEnhancedFallbackBio() {
-            const templates = [
-                `In the depths of ${currentTraits.setting}, legends whisper of ${currentName}. ${currentTraits.origin.charAt(0).toUpperCase() + currentTraits.origin.slice(1)}, this ${currentTraits.category.toLowerCase()} now stalks the shadows with an insatiable hunger. Wielding the terrifying power of ${currentTraits.powers.toLowerCase()}, it leaves behind only ${currentTraits.signature.toLowerCase()}. Those who encounter this nightmare speak of ${currentTraits.physical.toLowerCase()}, a sight that haunts them until their dying breath.`,
-                
-                `${currentName} emerged from ${currentTraits.origin.toLowerCase()}, forever changed and thirsting for more. This ${currentTraits.category.toLowerCase()} claims ${currentTraits.setting} as its hunting ground, where it demonstrates ${currentTraits.personality.toLowerCase()}. With the ability of ${currentTraits.powers.toLowerCase()}, few survive to tell the tale. The creature is unmistakable, bearing ${currentTraits.physical.toLowerCase()}, and always ${currentTraits.signature.toLowerCase()}.`,
-                
-                `Long ago, ${currentTraits.origin.toLowerCase()}, giving birth to the horror known as ${currentName}. Within ${currentTraits.setting}, this ${currentTraits.category.toLowerCase()} reigns supreme, ${currentTraits.personality.toLowerCase()}. Its victims fall prey to ${currentTraits.powers.toLowerCase()}, powerless against such dark forces. Survivors describe its form as ${currentTraits.physical.toLowerCase()}, forever scarred by the encounter.`,
-                
-                `The entity called ${currentName} haunts ${currentTraits.setting}, a being forged through ${currentTraits.origin.toLowerCase()}. As a ${currentTraits.category.toLowerCase()}, it commands ${currentTraits.powers.toLowerCase()}, bending reality to its will. Those brave or foolish enough to seek it out witness ${currentTraits.physical.toLowerCase()}. Its presence is always marked by ${currentTraits.signature.toLowerCase()}, a grim warning to those who would follow.`,
-                
-                `Scholars debate the true nature of ${currentName}, but all agree on one thing: it is death incarnate. ${currentTraits.origin.charAt(0).toUpperCase() + currentTraits.origin.slice(1)}, this ${currentTraits.category.toLowerCase()} dwells in ${currentTraits.setting}. It possesses ${currentTraits.powers.toLowerCase()}, making it nearly unstoppable. The few who escape speak of ${currentTraits.physical.toLowerCase()}, and ${currentTraits.signature.toLowerCase()}.`
-            ];
+    const intros = [
+        `In forgotten ages, whispers told of ${currentName}, a being born of ${currentTraits.origin.toLowerCase()}.`,
+        `${currentName} was not created—it was unleashed, torn from the fabric of ${currentTraits.origin.toLowerCase()}.`,
+        `Long ago, something terrible stirred in ${currentTraits.setting.toLowerCase()}, and from that darkness came ${currentName}.`,
+        `No one remembers how ${currentName} came to be, only that it was never meant to exist.`,
+        `They say ${currentName} was once mortal, until ${currentTraits.origin.toLowerCase()} twisted it into something unrecognizable.`
+    ];
 
-            return templates[Math.floor(Math.random() * templates.length)];
-        }
+    const middles = [
+        `Now it roams ${currentTraits.setting.toLowerCase()}, where the brave vanish and only echoes remain.`,
+        `Those who wander too close to ${currentTraits.setting.toLowerCase()} hear its voice in their dreams.`,
+        `It stalks the edges of reality, appearing where fear is thickest and hope has died.`,
+        `Its form defies reason — ${currentTraits.physical.toLowerCase()} — a vision of decay and power.`,
+        `Few can look upon it without losing part of their sanity; its shape is a reflection of nightmares made flesh.`
+    ];
+
+    const powers = [
+        `Some claim it wields ${currentTraits.powers.toLowerCase()}, while others insist it bends the will of death itself.`,
+        `Legends speak of its gift — or curse — of ${currentTraits.powers.toLowerCase()}, capable of unmaking the soul.`,
+        `It commands unnatural power, twisting ${currentTraits.powers.toLowerCase()} as if born from chaos.`,
+        `Those who have witnessed its power speak of ${currentTraits.powers.toLowerCase()}, a force beyond mortal comprehension.`,
+        `Its abilities are whispered in cultist rituals — ${currentTraits.powers.toLowerCase()} — and none who repeat them survive.`
+    ];
+
+    const endings = [
+        `Wherever it walks, life withers and time forgets itself.`,
+        `Only ashes and silence remain when its presence fades.`,
+        `Survivors tell their tales in trembling voices, and none ever wish to see it again.`,
+        `Its name is forbidden now — spoken only by the mad and the dying.`,
+        `And still, beneath the stars, ${currentName} waits — patient, eternal, and hungry.`
+    ];
+
+    // Randomly pick 1 from each section
+    const intro = intros[Math.floor(Math.random() * intros.length)];
+    const middle = middles[Math.floor(Math.random() * middles.length)];
+    const power = powers[Math.floor(Math.random() * powers.length)];
+    const end = endings[Math.floor(Math.random() * endings.length)];
+
+    // Combine into a natural, lore-like paragraph
+    return `${intro} ${middle} ${power} ${end}`;
+}
+
 
         function generateEnhancedImagePrompt() {
             const compositions = [
