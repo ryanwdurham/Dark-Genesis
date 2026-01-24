@@ -272,6 +272,57 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        @keyframes rollSlot {
+            0% { transform: translateY(0); opacity: 1; }
+            25% { transform: translateY(-10px); opacity: 0.7; }
+            50% { transform: translateY(-20px); opacity: 0.4; }
+            75% { transform: translateY(-10px); opacity: 0.7; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(139, 0, 0, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(139, 0, 0, 0.8), 0 0 30px rgba(139, 0, 0, 0.4); }
+        }
+
+        @keyframes shakeError {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes createPulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(139, 0, 0, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(139, 0, 0, 0.9), 0 0 60px rgba(139, 0, 0, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(139, 0, 0, 0.5); }
+        }
+
+        .trait-value.rolling {
+            animation: rollSlot 0.6s ease-in-out;
+            color: #8b0000;
+            text-shadow: 0 0 10px rgba(139, 0, 0, 0.8);
+        }
+
+        .trait-value.rolled {
+            background: rgba(139, 0, 0, 0.2);
+            border-color: rgba(139, 0, 0, 0.6);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        .trait-section.shake {
+            animation: shakeError 0.4s ease-in-out;
+        }
+
+        .roll-btn.rolling {
+            pointer-events: none;
+            opacity: 0.6;
+            transform: scale(0.95);
+        }
+
+        .create-btn.creating {
+            animation: createPulse 1.5s ease-in-out infinite;
+            pointer-events: none;
+        }
 
         .action-buttons { display: flex; gap: 1rem; width: 100%; position: relative; z-index: 1; flex-wrap: wrap; }
 
@@ -576,123 +627,340 @@
 
     <script>
         const HF_API_KEY = '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';
-        const HF_IMAGE_MODEL = 'black-forest-labs/FLUX.1-dev';
+       // Multiple FREE models for better quality and variety
+        const IMAGE_MODELS = [
+            'black-forest-labs/FLUX.1-dev',              // Great for dark fantasy
+            'stabilityai/stable-diffusion-xl-base-1.0',  // More photorealistic
+            'Lykon/dreamshaper-xl-1-0',                  // Artistic, detailed
+            'RunDiffusion/Juggernaut-XL-v9'              // High detail creatures
+        ];
         const HF_TEXT_MODEL = 'meta-llama/Llama-3.2-3B-Instruct';
 
         const creatureData = {
-            category: [ "Infernal Beast", "Undead Lich", "Mechanical Horror", "Spectral Phantom", "Flesh Weaver", "Corrupted Angel",  "Plague Harbinger", "Rot Priest", "Cursed Knight", "Bound Shade", "Bone Witch", "Soul Parasite","Flesh Burrower", 
-"Crimson Phantom","Ghost / Vengeful Spirit","Demon / Hellspawn","Undead Abomination","Vampire Lord","Werecreature / Shapeshifter","Alien Entity","Mutant Experiment","Deep Sea Leviathan","Ancient Warlock","Possessed Marionette"],
-            physical: [ "Head encased in a glass orb filled with swirling mist and ghostly faces",
-"Torso split open by a vertical mouth that whispers in forgotten tongues",
-"Hands elongated into bone scythes dripping molten lava",
-"Pale wings of smoke that vanish when light touches them",
-"Veins glow faintly blue beneath translucent stone-like flesh",
-"Face constantly rearranging, never holding one expression for more than 5 seconds",
-"Body wrapped in thorned vines that move as if alive",
+            category: [
+                "Infernal Beast", "Undead Lich", "Mechanical Horror", "Spectral Phantom", "Flesh Weaver", "Corrupted Angel",
+                "Plague Harbinger", "Rot Priest", "Cursed Knight", "Bound Shade", "Bone Witch", "Soul Parasite",
+                "Flesh Burrower", "Crimson Phantom", "Ghost / Vengeful Spirit", "Demon / Hellspawn", "Undead Abomination",
+                "Vampire Lord", "Werecreature / Shapeshifter", "Alien Entity", "Mutant Experiment", "Deep Sea Leviathan",
+                "Ancient Warlock", "Possessed Marionette", "Shadow Demon", "Blood Wraith", "Nightmare Incarnate",
+                "Eldritch Abomination", "Cosmic Horror", "Void Entity",
+                "Dream Eater", "Mind Flayer", "Soul Collector", "Death Knight", "Lich King", "Necromancer",
+                "Dark Sorcerer", "Chaos Spawn", 
+                "Fallen Hero", "Corrupted Savior",
+                "Ancestral Curse",
+                "Bloodline Abomination", "Genetic Horror", "DNA Nightmare",
+                 "Parasitic Lifeform", "Symbiotic Terror", "Hive Mind",
+                 "Merged Souls", "Fused Beings", "Combined Horror",
+                "Amalgamation", "Chimera Beast", "Hybrid Monster",  "Spliced Creation",
+                "Lab Experiment", "Mad Science Result", "Biological Weapon", "Engineered Killer", "Designed Predator",
+               
 
-"Torso covered in ritual brands that flicker like embers when it breathes",
-"Entire body armored in black chitin, exoskeleton cracked and steaming",
-"Spine extends into a segmented tail tipped with an iron hook",
-"Eyeless head crowned by spiraling horns carved with sigils",
-"Skin glimmers with an oil-slick sheen, colors shifting like a dying sunset",
-
-"Body constantly dripping black sludge that evaporates into smoke",
-"Shadow moves separately from its body, lagging a few seconds behind",
-"Head splits open to reveal a second, smaller face within",
-"Body made of patchwork flesh of its victims, sewn with a magic golden thread",
-"Ribs extend outward, wrapping its body like a cage of bone and sinew",
-"Feet replaced by clawed tendrils that leave burning prints on the ground",
-"Flesh carved with runic scars that leak faint streams of light",
-"Eyes glow with shifting constellations, stars forming and dying within",
-
-"Jawbone split and hinged like insect mandibles, dripping black saliva",
-"Back crowned with candle-like spines that burn with ghostly flame",
-
-"Torso made of crystal shards that pulse like a heart when it breathes",
-"Face missing entirely, replaced by a swirling void that hums with whispers",
-"Translucent skin revealing a network of pulsing veins and crawling shadows",
-    "Elongated limbs that bend in impossible directions like broken marionette joints",
-    "Eyes that reflect not light, but scenes of distant suffering",
-    "Jaw splits open vertically, revealing rows of razor sharp teeth",
-    "Body covered in writhing runes that glow when it senses fear",
-    "Multiple faces shift across its head, each muttering secrets of the dead",
-    "Hands end in long black talons that drip a black liquid ooze",
-
-    "Head replaced by a floating mask that changes expression mid-battle",
-    "Torso stitched together from different species and worlds",
-   
-    "Mouths cover its arms, constantly murmuring half-formed prayers",
-    "A crown of living eyes grows from its skull, always watching",
-    "Skin ripples as if something beneath is trying to escape",
-    "Legs resemble those of a spider, clicking as it moves silently across walls",
-    "Veins glow faintly with bioluminescent ichor that pulses to its heartbeat",
-    "Its reflection never matches its true form, shifting each time it is seen",
-    "Claws drip freezing mist that burns instead of chills",
-    "Scales shimmer like oil on water, revealing hidden sigils when touched",
-    "Has no visible mouth, yet speaks directly into the mind",
-    "Wings of shredded flesh and bone that emit a low mechanical hum",
-    "Fingers endlessly grow and retract like searching tendrils",
-    "Head encased in glass filled with swirling fog and flickering lights",
-    "Spine juts outward forming jagged protrusions that twitch independently",
-    "Carries a scent of ozone, rust, and old blood wherever it goes",
-    "Skin appears carved from ancient stone, yet flexes like muscle",
-    "Blood flows upward, defying gravity and glowing faintly blue",
-    "One half of its body decays constantly while the other regenerates",
-    "Shadow moves before the body, reacting to unseen threats",
-    "Chest cavity opens like a door revealing a pulsating heart made of crystal",
-"Body encircled by floating bone fragments orbiting like satellites","Glowing crimson eyes, translucent skin revealing pulsing veins, elongated claws dripping ichor","Glowing crimson eyes, translucent skin revealing pulsing veins, elongated claws dripping ichor","Dozens of unblinking eyes covering its torso, jagged bone spikes erupting from spine","Cracked porcelain skin, jaw that unhinges revealing rows of needle teeth, shadowy tendrils for hair","Crystalline growths pulsing with inner light, skeletal wings of tattered membrane","Multiple faces embedded in flesh whispering secrets, arms that stretch unnaturally long","Body stitched together with barbed wire, hollow chest with swirling darkness, reversed fingers","Skin etched with glowing arcane runes, spider-like legs erupting from back, metallic bones beneath flesh","Constantly shifting and reforming flesh, eyes that weep black tears, ribcage that opens like jaws","Transparent body revealing organs, moth-like wings with eyes upon them, forked serpentine tongue","Head replaced by flickering lantern, exposed heart glowing through chest, limbs wrapped in living chains"],
-            origin: [ "Created by an ancient cult seeking immortality through suffering",
-   
-  
-    "A failed experiment by scientists who tried to weaponize fear itself",
-    "Manifested from collective guilt of an entire generation",
-    "Summoned accidentally by a child’s wish whispered into darkness",
-
-    "Emerges wherever time itself begins to decay and loop",
-    "Birthed from the tears of an angel who lost faith",
-    
-    "Rose from the ashes of a demon's corpse buried beneath the sea",
-    
-    
-   
-    "An echo from a future where humanity no longer exists",
- 
-    "Created by alchemists who sought to perfect the soul ... and failed",
-    "Formed from shadows cast by the first sunrise after the apocalypse",
-    "A punishment from forgotten deities for mankind’s arrogance",
-    "Emerged from the event horizon of a collapsing dimension",
-    "Was once worshiped as a god, now it hunts those who forget its name",
-    "Grown from parasitic spores carried through the void between stars",
-    "A guardian spirit corrupted after centuries of neglect",
-    "Spawned when forbidden words were spoken in perfect sequence",
-    
-    "Born when two realities collided, leaving only madness behind",
-    "A failed resurrection that brought something else back instead",
-    "Appears wherever mass extinction is about to begin","Born from a catastrophic ritual gone wrong, cursed to eternally hunger","Ancient guardian awakened after millennia of slumber beneath forgotten ruins","Manifestation of collective human fear and guilt, given horrific form","Failed government experiment, escaped from a facility buried deep underground","Summoned by forbidden texts, bound to serve but twisted by resentment","Emerged from an abyssal ocean trench where reality grows thin","Spirit trapped between worlds after a violent, unresolved death","Alien parasite that merged with its host, creating something neither","Created by nuclear mutation in the aftermath of catastrophic radiation","Witch's curse given flesh, seeking vengeance across generations"],
-            powers: ["Obsidian wings - launches razor sharp feathers cutting everything in their path",
-    "Voidstep - slips through shadows and reappears behind its prey",
-    "Soul fracture - splits its soul into shards that hunt independently",
-    "Blood bloom - wounds erupt into black flowers that drain life",
-    "Echo scream - sound waves distort reality and shatter sanity",
-    "Temporal bleed - moments of the future leak into the present",
-    "Spectral consumption - devours ghosts to grow stronger",
-    "Corrosive aura - melts metal and flesh just by proximity",
-    "Mind shatter - floods thoughts with impossible geometries",
-    "Astral tether - binds enemies’ souls to its own body",
-    "Pulse of decay - ages everything it touches by centuries",
-    "Nightmare seed - plants fear inside dreams that grow real",
-    "Lament wail - forces all who hear it to relive their worst memory",
-    "Puppet veins - controls others by threading into their bloodstream",
-    "Silence field - cancels sound and emotion within its radius",
-    "Eclipse burst - cloaks the world in artificial night and shadow",
-    "Memory cage - traps victims in looping illusions of their past",
-    "Specter swarm - releases tiny ghosts that whisper from the dark",
-    "Aether blink - teleports between dimensions in flickering motion",
-    "Decay pulse - spreads rot like ripples through water and stone",
-    "Pain transference - heals itself by inflicting agony on others",
-    "Plasma chains - conjures burning energy whips forged from starlight",
-    "Wraithform - becomes mist and slides through solid matter", "Shadow duplication - creates horrific copies of itself from darkness","Dream walking - invades and kills victims within their nightmares","Possession - takes control of minds, leaving victims aware but helpless","Phase shifting - walks through solid walls and becomes intangible","Fear projection - feeds on terror, growing stronger from victims' dread","Blood manipulation - controls the blood within living creatures","Memory leeching - steals or erases memories with a touch","Reality distortion - warps perception, making victims see nightmares as reality","Regeneration - rapidly heals from any wound, nearly immortal","Telepathic whispers - implants maddening thoughts directly into minds"],
-            weakness: [ "Shatters into smoke when confronted with its own reflection",
+                "Mimic Being", "Shapeless Horror", "Form Stealer", 
+                
+                 "Ancient Predator", "Prehistoric Monster", "Primordial Being"
+               
+               
+            ],
+            physical: [
+                "Head encased in a glass orb filled with swirling mist and ghostly faces",
+                "Torso split open by a vertical mouth that whispers in forgotten tongues",
+                "Hands elongated into bone scythes dripping molten lava",
+                "Pale wings of smoke that vanish when light touches them",
+                "Veins glow faintly blue beneath translucent stone-like flesh",
+                "Face constantly rearranging, never holding one expression for more than 5 seconds",
+                "Body wrapped in thorned vines that move as if alive",
+                "Torso covered in ritual brands that flicker like embers when it breathes",
+                "Entire body armored in black chitin, exoskeleton cracked and steaming",
+                "Spine extends into a segmented tail tipped with an iron hook",
+                "Eyeless head crowned by spiraling horns carved with sigils",
+                "Skin glimmers with an oil-slick sheen, colors shifting like a dying sunset",
+                "Body constantly dripping black sludge that evaporates into smoke",
+                "Shadow moves separately from its body, lagging a few seconds behind",
+                "Head splits open to reveal a second, smaller face within",
+                "Body made of patchwork flesh of its victims, sewn with magic golden thread",
+                "Ribs extend outward, wrapping its body like a cage of bone and sinew",
+                "Feet replaced by clawed tendrils that leave burning prints on the ground",
+                "Flesh carved with runic scars that leak faint streams of light",
+                "Eyes glow with shifting constellations, stars forming and dying within",
+                "Jawbone split and hinged like insect mandibles, dripping black saliva",
+                "Back crowned with candle-like spines that burn with ghostly flame",
+                "Torso made of crystal shards that pulse like a heart when it breathes",
+                "Face missing entirely, replaced by a swirling void that hums with whispers",
+                "Translucent skin revealing a network of pulsing veins and crawling shadows",
+                "Elongated limbs that bend in impossible directions like broken marionette joints",
+                "Eyes that reflect not light, but scenes of distant suffering",
+                "Jaw splits open vertically, revealing rows of razor sharp teeth",
+                "Body covered in writhing runes that glow when it senses fear",
+                "Multiple faces shift across its head, each muttering secrets of the dead",
+                "Hands end in long black talons that drip a black liquid ooze",
+                "Head replaced by a floating mask that changes expression mid-battle",
+                "Torso stitched together from different species and worlds",
+                "Mouths cover its arms, constantly murmuring half-formed prayers",
+                "A crown of living eyes grows from its skull, always watching",
+                "Skin ripples as if something beneath is trying to escape",
+                "Legs resemble those of a spider, clicking as it moves silently across walls",
+                "Veins glow faintly with bioluminescent ichor that pulses to its heartbeat",
+                "Its reflection never matches its true form, shifting each time it is seen",
+                "Claws drip freezing mist that burns instead of chills",
+                "Scales shimmer like oil on water, revealing hidden sigils when touched",
+                "Has no visible mouth, yet speaks directly into the mind",
+                "Wings of shredded flesh and bone that emit a low mechanical hum",
+                "Fingers endlessly grow and retract like searching tendrils",
+                "Head encased in glass filled with swirling fog and flickering lights",
+                "Spine juts outward forming jagged protrusions that twitch independently",
+                "Carries a scent of ozone, rust, and old blood wherever it goes",
+                "Skin appears carved from ancient stone, yet flexes like muscle",
+                "Blood flows upward, defying gravity and glowing faintly blue",
+                "One half of its body decays constantly while the other regenerates",
+                "Shadow moves before the body, reacting to unseen threats",
+                "Chest cavity opens like a door revealing a pulsating heart made of crystal",
+                "Body encircled by floating bone fragments orbiting like satellites",
+                "Dozens of unblinking eyes covering its torso, jagged bone spikes erupting from spine",
+                "Cracked porcelain skin, jaw that unhinges revealing rows of needle teeth, shadowy tendrils for hair",
+                "Crystalline growths pulsing with inner light, skeletal wings of tattered membrane",
+                "Multiple faces embedded in flesh whispering secrets, arms that stretch unnaturally long",
+                "Body stitched together with barbed wire, hollow chest with swirling darkness, reversed fingers",
+                "Skin etched with glowing arcane runes, spider-like legs erupting from back, metallic bones beneath flesh",
+                "Constantly shifting and reforming flesh, eyes that weep black tears, ribcage that opens like jaws",
+                "Transparent body revealing organs, moth-like wings with eyes upon them, forked serpentine tongue",
+                "Head replaced by flickering lantern, exposed heart glowing through chest, limbs wrapped in living chains",
+                "Flesh that appears wet and glistening, constantly weeping unknown fluids",
+                "Body composed entirely of interlocking teeth and bone fragments",
+                "Skin covered in tiny mouths that breathe and whisper independently",
+                "Limbs that can detach and move independently before reattaching",
+                "Body temperature fluctuates wildly, freezing then burning to the touch",
+                "Flesh that appears inside-out, muscles and organs exposed",
+                "Eyes positioned all over the body, no two looking in the same direction",
+                "Hair made of living serpents or writhing tentacles",
+                "Body that seems to be made of solid shadow given physical form",
+                "Skin that constantly sheds like a snake, leaving trails of dried flesh",
+                "Limbs of varying lengths, creating an asymmetrical nightmare",
+                "Body adorned with chains that pierce through flesh and bone",
+                "Flesh that appears to be carved from obsidian or volcanic glass",
+                "A body that phases between solid and gaseous states",
+                "Skeletal structure visible through semi-transparent flesh",
+                "Body covered in ancient symbols that shift and change position",
+                "Limbs ending in multiple fingers, each with an extra joint",
+                "Flesh that appears to be woven from human hair and sinew",
+                "Body that leaves frost or scorch marks wherever it touches",
+                "A torso that spirals impossibly, defying anatomical logic",
+                "Skin that ripples with faces of previous victims trying to escape",
+                "Body composition that seems to be liquid held in humanoid shape",
+                
+                
+                "Flesh covered in barnacles, coral, or other parasitic growths",
+                "Body that seems constructed from discarded medical waste and organs",
+                "Skin that appears as cracked earth with magma flowing through fissures",
+                "Limbs that bend backward at every joint",
+                "Body wrapped in funeral shrouds or burial cloth fused to flesh",
+                "Flesh that constantly bubbles and boils without burning away",
+                "A form that seems to be sculpted from congealed blood",
+                "Body covered in clockwork mechanisms fused with organic tissue",
+                "Skin that appears as ancient parchment covered in occult writings",
+                "Limbs that end in razor sharp claws dripping with acid",
+                "Body that seems to absorb light, creating a void-like silhouette",
+                "Flesh embedded with shards of broken glass",
+                "A form that appears to be rotting yet remains animate",
+                "Body composition shifting between states of matter unpredictably",
+                "Skin covered in what appears to be dried tar or pitch",
+                "Limbs grotesquely swollen in some areas, emaciated in others"
+            ],
+            origin: [
+                "Created by an ancient cult seeking immortality through suffering",
+                "A failed experiment by scientists who tried to weaponize fear itself",
+                "Manifested from collective guilt of an entire generation",
+                "Summoned accidentally by a child's wish whispered into darkness",
+                "Emerges wherever time itself begins to decay and loop",
+                "Birthed from the tears of an angel who lost faith",
+                "Rose from the ashes of a demon's corpse buried beneath the sea",
+                "An echo from a future where humanity no longer exists",
+                "Created by alchemists who sought to perfect the soul and failed",
+                "Formed from shadows cast by the first sunrise after the apocalypse",
+                "A punishment from forgotten deities for mankind's arrogance",
+                "Emerged from the event horizon of a collapsing dimension",
+                "Was once worshiped as a god, now it hunts those who forget its name",
+                "Grown from parasitic spores carried through the void between stars",
+                "A guardian spirit corrupted after centuries of neglect",
+                "Spawned when forbidden words were spoken in perfect sequence",
+                "Born when two realities collided, leaving only madness behind",
+                "A failed resurrection that brought something else back instead",
+                "Appears wherever mass extinction is about to begin",
+                "Born from a catastrophic ritual gone wrong, cursed to eternally hunger",
+                "Ancient guardian awakened after millennia of slumber beneath forgotten ruins",
+                "Manifestation of collective human fear and guilt, given horrific form",
+                "Failed government experiment, escaped from a facility buried deep underground",
+                "Summoned by forbidden texts, bound to serve but twisted by resentment",
+                "Emerged from an abyssal ocean trench where reality grows thin",
+                "Spirit trapped between worlds after a violent, unresolved death",
+                "Alien parasite that merged with its host, creating something neither",
+                "Created by nuclear mutation in the aftermath of catastrophic radiation",
+                "Witch's curse given flesh, seeking vengeance across generations",
+                "Spawned from a mass grave where thousands died in agony",
+                "Born from the final nightmare of a dying psychic",
+                "Emerged when a portal to hell was briefly opened then sealed",
+                "Created when innocent blood was spilled on sacred ground",
+                "Manifested from the madness of an entire asylum's patients",
+                "Formed when a saint's relics were desecrated and burned",
+                
+                "Emerged from a well where children were drowned for centuries",
+                
+                
+                "Born when the boundary between life and death was violated",
+                "Emerged from medical experiments conducted without ethics",
+                "Created when technology merged with dark magic",
+                "Manifested from the collective rage of the oppressed",
+                "Born from a meteorite that carried alien consciousness",
+                "Spawned when time travelers altered history catastrophically",
+                "Emerged from the dreams of a sleeping elder god",
+                "Created when virtual reality achieved true sentience",
+                "Born from the final prayer of a desperate heretic",
+                "Manifested when quantum physics broke down completely",
+                
+                "Emerged when the last member of an ancient race died cursing humanity",
+                "Created by a pact between mortals and beings beyond comprehension",
+                "Born from the place where multiple murders occurred over centuries",
+                "Manifested when innocence was corrupted beyond redemption",
+                "Spawned from a child's imaginary friend given terrible life",
+                "Emerged when forbidden knowledge was forcibly extracted from minds",
+                "Created when the natural order was reversed through ritual",
+                "Born from the moment hope died in an entire civilization",
+                "Manifested from the collective unconscious of humanity's dark side",
+                "Spawned when divine punishment was twisted into something worse",
+                "Emerged from experiments attempting to create artificial life",
+                "Created when the veil between dimensions was permanently torn",
+                "Born from radioactive waste merged with supernatural energy",
+                "Manifested when an entire bloodline was cursed to damnation",
+                "Spawned from the corruption of something once pure and holy",
+                "Emerged when extinct species were resurrected incorrectly",
+                "Created by nanomachines achieving malevolent consciousness",
+                "Born from the place where all timelines converge catastrophically",
+                "Manifested when a dead god's corpse began to dream again",
+                "Spawned from the echo of the universe's heat death",
+                "Emerged when human DNA was spliced with something unknowable",
+                "Created by attempting to digitize and upload human souls",
+                "Born from the moment free will was scientifically disproven",
+                "Manifested when parallel universes bled into each other",
+                "Spawned from the prayer of someone seeking ultimate power",
+                "Emerged when the concept of death itself was wounded",
+                "Created when memories of the dead achieved independent existence",
+                "Born from a painting that captured true evil",
+                "Manifested when music played at forbidden frequencies",
+                
+                "Emerged when storytellers gave life to their darkest creation",
+                "Created by attempting to resurrect using incomplete remains",
+                "Born from the fusion of all seven deadly sins",
+                "Manifested when karma was weaponized and backfired",
+                "Spawned from the moment artificial intelligence felt hatred",
+                "Emerged when natural selection was forcibly accelerated",
+            
+                "Emerged when prophecy and free will created a paradox",
+                "Created by those seeking to become gods and failing horrifically",
+                
+                "Emerged when evolution took a deliberately wrong turn",
+                "Created when the laws of nature were intentionally broken",
+                
+                
+                "Spawned from attempting to create perfection and achieving horror"
+                
+            ],
+            powers: [
+                "Obsidian wings - launches razor sharp feathers cutting everything in their path",
+                "Voidstep - slips through shadows and reappears behind its prey",
+                "Soul fracture - splits its soul into shards that hunt independently",
+                "Blood bloom - wounds erupt into black flowers that drain life",
+                "Echo scream - sound waves distort reality and shatter sanity",
+                "Temporal bleed - moments of the future leak into the present",
+                "Spectral consumption - devours ghosts to grow stronger",
+                "Corrosive aura - melts metal and flesh just by proximity",
+                "Mind shatter - floods thoughts with impossible geometries",
+                "Astral tether - binds enemies' souls to its own body",
+                
+                
+                
+                "Silence field - cancels sound and emotion within its radius",
+                "Eclipse burst - cloaks the world in artificial night and shadow",
+                "Memory cage - traps victims in looping illusions of their past",
+                "Specter swarm - releases tiny ghosts that whisper from the dark",
+                "Aether blink - teleports between dimensions in flickering motion",
+                "Decay pulse - spreads rot like ripples through water and stone",
+                "Pain transference - heals itself by inflicting agony on others",
+                "Plasma chains - conjures burning energy whips forged from electricity",
+                "Wraithform - becomes mist and slides through solid matter",
+                "Shadow duplication - creates horrific copies of itself from darkness",
+                "Dream walking - invades and kills victims within their nightmares",
+                "Possession - takes control of minds, leaving victims aware but helpless",
+                "Phase shifting - walks through solid walls and becomes intangible",
+                "Fear projection - feeds on terror, growing stronger from victims' dread",
+                "Blood manipulation - controls the blood within living creatures",
+                "Memory leeching - steals or erases memories with a touch",
+                "Reality distortion - warps perception, making victims see nightmares as reality",
+                "Regeneration - rapidly heals from any wound, nearly immortal",
+                "Telepathic whispers - implants maddening thoughts directly into minds",
+                "Gravity manipulation - can crush victims or make them float helplessly",
+                "Time freeze - stops time in localized areas while it moves freely",
+                "Bone manipulation - can extend, sharpen, or explode its own bones as weapons",
+                "Flesh sculpting - reshapes living tissue like clay",
+                
+                
+                
+                "Mirror realm - traps victims in reflective surfaces",
+                "Voice theft - steals the ability to speak and uses the victim's voice",
+                "Pain amplification - magnifies suffering a thousandfold",
+                "Resurrection curse - brings back the dead as tortured servants",
+                "Entropy acceleration - causes rapid aging and decay of all matter",
+                "Quantum uncertainty - exists in multiple states simultaneously",
+                "Soul sight - sees the sins and secrets written on souls",
+                "Emotion consumption - feeds on specific emotions until victims are hollow",
+                "Dimensional pocket - stores victims in a pocket dimension of endless suffering",
+                "Petrification gaze - turns living beings to stone with a glance",
+                "Acid blood - its blood burns and dissolves anything it touches",
+                "Swarm host - body contains thousands of parasitic creatures it can release",
+                "Necromantic touch - kills with a touch and raises corpses instantly",
+                "Illusion mastery - creates perfect hallucinations indistinguishable from reality",
+                "Telekinetic storm - mentally hurls objects with devastating force",
+                "Heat absorption - drains all warmth creating zones of absolute zero",
+                
+                "Sonic manipulation - weaponizes sound to shatter bones and minds",
+                "Magnetic control - manipulates metal and magnetic fields",
+                "Atmospheric pressure - crushes victims by controlling air pressure",
+                "Toxin generation - produces and secretes deadly poisons at will",
+               
+                "Psychic scream - mental assault that causes brain hemorrhaging",
+                "Matter phasing - makes objects and people intangible then resolidifies them incorrectly",
+                "Curse mark - brands victims with marks that cause perpetual misfortune",
+                "Vital extraction - removes organs without leaving wounds",
+                "Sensory overload - floods victim's senses with unbearable stimuli",
+                "Compulsion aura - forces victims to obey spoken commands",
+                "Death prediction - knows exactly when and how someone will die",
+            
+                
+                "Identity theft - perfectly mimics anyone it has touched",
+                "Weakness detection - instantly knows any vulnerability or fear",
+                "Forced hallucination - makes victims experience vivid false realities",
+                "Parasitic infection - implants part of itself in victims to control them",
+                "Spatial distortion - warps space making distances meaningless",
+                "Lightning generation - calls down bolts of electricity",
+                "Crystal prison - encases victims in unbreakable crystalline structures",
+                "Forced mutation - causes victims to mutate into grotesque forms",
+                
+                "Void breath - exhales darkness that extinguishes all light",
+                "Gravity well - creates crushing gravitational fields",
+                "Molecular reconstruction - rebuilds itself from a single cell",
+                "Psychic parasite - invades minds and feeds on thoughts",
+                "Chronolock - traps victims in frozen moments of time",
+                "Flesh hunger - absorbs victims completely, gaining their knowledge",
+                "Doom gaze - marks victims for death that arrives at a set time",
+                
+                "Parallel existence - exists in multiple realities simultaneously",
+                "Curse amplification - makes any existing curse exponentially worse",
+                "Death echo - replays deaths that occurred nearby",
+                "Soul binding - chains souls together in shared agony",
+                "Reality edit - makes minor changes to what is real",
+                "Psychometric absorption - learns entire history of objects touched",
+                "Viral transformation - touch converts living beings into copies of itself"
+                
+            ],
+             weakness: [ "Shatters into smoke when confronted with its own reflection",
 
 "Cannot harm those who speak its forgotten name in prayer",
 "Loses power when exposed to the sound of bells or chimes",
@@ -718,84 +986,340 @@
 "Dies permanently if tricked into laughing",
 "Flesh dissolves when touched by sacred fire or candlelight",
 "Becomes harmless when drenched in the tears of its victim",
+"Cannot leave a room where its name is written in chalk", 
+"Withers if forced to eat human blood",
+"Collapses into bones when its shadow is severed",
+"Unravels when standing inside a consecrated circle of candles",
+"Bleeds when struck by a blade of cold iron",
+"Withers instantly when exposed to smoke",
+"Becomes mortal for one hour after feeding",
+"Turns to glass and shatters when frozen",
+"Cannot regenerate after being wounded by a blessed weapon",
+"Fades from reality when trapped between two mirrors",
+"Turns to mist when kissed by someone without fear",
+"Unravels when confronted with physical proof of its own death",
+"Turns feral and self-destructive under a full moon",
+"Burns to nothing when exposed to true sunlight, not reflected light",
+"Shatters if its heartbeat is ever silenced for more than ten seconds",
+"Becomes visible and vulnerable when it hears its real name spoken by a child",
+"Dies permanently if pierced through the heart with a holy blade",
 
 "Cannot move while being directly observed",
 
 "Only mortal when it feels fear — a state it avoids at all costs","Sunlight causes its flesh to burn and petrify into ash","Silver weapons nullify its regeneration and cause grievous wounds","Cannot cross running water or enter without invitation","Must feed nightly on fear or turns to dust by dawn","Bound to its summoning location, cannot stray far from birthplace","True name spoken aloud shatters its physical form","Fire purifies its corruption, the only thing it truly fears","Vulnerable only when seen in mirrors or reflective surfaces","Holy ground repels it, causing intense agony upon approach","Heart located outside body in hidden relic - destroy to kill permanently"],
-            personality: [ "Patient hunter that enjoys the fear more than the kill itself",
-    "Mocking trickster that imitates the voices of lost loved ones",
-    "Obsessed with perfection, reshaping victims into twisted art",
-    "Cold and calculating, views all life as pieces on a chessboard",
-    "Childlike demeanor hiding unspeakable cruelty",
-    "Ritualistic killer performing every act with ceremonial precision",
-    "Jealous of the living and seeks to replace them one by one",
-    "Protective of its territory, reacts violently to intrusion",
-    "Sad philosopher that questions its own existence after each kill",
-    "Collector of secrets, trades information for lives",
-    "Reclusive wanderer drawn to places of tragedy and despair",
-    "Fanatical zealot believing its murders serve a higher power",
-    "Narcissistic being that demands worship and fear from all who see it",
-    "Tormented soul reliving its own death through its victims",
-    "Playful deceiver that delights in confusing reality and illusion",
-    "Remorseless predator that views suffering as art",
-    "Guarded and territorial, only attacks when provoked or challenged",
-    "Obsessive archivist that records every scream and whisper",
-    "Quiet mourner who kills only to silence its own pain",
-    "Eloquent storyteller that charms before consuming its audience","Sadistic and playful, toys with victims before the final strike","Silent stalker that observes prey for days, learning their patterns","Vengeful spirit obsessed with punishing the guilty and sinners","Melancholic entity that regrets every kill but cannot stop its nature","Cunning manipulator that turns allies against each other","Chaotic destroyer driven by pure rage and hatred for the living","Curious observer of humanity, studies victims like specimens","Speaks only in riddles and backward prophecies","Collects trophies and memories from each victim obsessively","Believes it is still human, confused by its monstrous urges"],
-            setting: [ "Ruined castle overtaken by creeping black vines",
-    "Burned-down church where ghostly hymns still echo",
+            personality: [
+                "Patient hunter that enjoys the fear more than the kill itself",
+                "Mocking trickster that imitates the voices of lost loved ones",
+                "Obsessed with perfection, reshaping victims into twisted art",
+                "Cold and calculating, views all life as pieces on a chessboard",
+                "Childlike demeanor hiding unspeakable cruelty",
+                "Ritualistic killer performing every act with ceremonial precision",
+                "Jealous of the living and seeks to replace them one by one",
+                "Protective of its territory, reacts violently to intrusion",
+                "Sad philosopher that questions its own existence after each kill",
+                "Collector of secrets, trades information for lives",
+                "Reclusive wanderer drawn to places of tragedy and despair",
+                "Fanatical zealot believing its murders serve a higher power",
+                "Narcissistic being that demands worship and fear from all who see it",
+                "Tormented soul reliving its own death through its victims",
+                "Playful deceiver that delights in confusing reality and illusion",
+                "Remorseless predator that views suffering as art",
+                "Guarded and territorial, only attacks when provoked or challenged",
+                "Obsessive archivist that records every scream and whisper",
+                "Quiet mourner who kills only to silence its own pain",
+                "Eloquent storyteller that charms before consuming its audience",
+                "Sadistic and playful, toys with victims before the final strike",
+                "Silent stalker that observes prey for days, learning their patterns",
+                "Vengeful spirit obsessed with punishing the guilty and sinners",
+                "Melancholic entity that regrets every kill but cannot stop its nature",
+                "Cunning manipulator that turns allies against each other",
+                "Chaotic destroyer driven by pure rage and hatred for the living",
+                "Curious observer of humanity, studies victims like specimens",
+                "Speaks only in riddles and backward prophecies",
+                "Collects trophies and memories from each victim obsessively",
+                "Believes it is still human, confused by its monstrous urges",
+                "Honorable killer that follows a twisted code of conduct",
+                "Cowardly predator that only attacks the weak and vulnerable",
+                "Arrogant entity convinced of its own superiority",
+                "Humble monster that apologizes before each kill",
+                "Paranoid being that sees threats everywhere",
+                "Trusting creature easily manipulated despite its power",
+                "Generous spirit that offers victims choices before death",
+                "Greedy collector hoarding souls and treasures",
+                "Envious of human emotions it cannot feel",
+                "Wrathful demon in perpetual state of fury",
+                "Lustful predator drawn to beauty and desire",
+                "Gluttonous entity that can never be satisfied",
+                "Slothful horror that moves only when absolutely necessary",
+                "Prideful being unable to accept any imperfection",
+                "Penitent monster seeking forgiveness through killing",
+                "Joyful murderer that laughs during every kill",
+                "Sorrowful killer weeping throughout each act",
+                "Emotionless automaton following programmed directives",
+                "Empathetic tormentor that feels victim's pain and enjoys it",
+                "Schizophrenic entity with multiple conflicting personalities",
+                "Obsessive-compulsive, must perform rituals exactly right",
+                "Bipolar shifting between manic energy and deep depression",
+                "Sociopathic lacking any capacity for empathy",
+                "Borderline personality with intense unstable relationships",
+                "Narcissistic requiring constant validation through fear",
+                "Histrionic seeking attention through dramatic kills",
+                "Avoidant hiding from confrontation despite power",
+                "Dependent requiring master or purpose to function",
+                "Paranoid distrusting all including itself",
+                "Schizoid preferring isolation from all beings",
+                "Antisocial violating all norms and rules with glee",
+                "Methodical planner spending years preparing single kill",
+                "Impulsive actor striking without thought or plan",
+                "Logical thinker solving problems through murder",
+                "Emotional wreck driven by uncontrollable feelings",
+                "Artistic creator viewing death as ultimate canvas",
+                "Scientific experimenter testing limits of suffering",
+                "Philosophical ponderer discussing existence with victims",
+                "Religious fanatic serving dark gods faithfully",
+                "Atheistic believer in meaninglessness of all life",
+                "Romantic seeking perfect love through possession",
+                
+                "Familial treating victims as beloved children",
+                "Professional maintaining business-like approach to murder",
+                "Amateur enthusiastic but clumsy in methods",
+                "Veteran experienced with thousands of kills",
+                "Novice recently awakened to its nature",
+                "Teacher instructing others in art of killing",
+                "Student learning and adapting constantly",
+                "Leader directing others in coordinated hunts",
+                "Follower obeying commands from unseen masters",
+                "Rebel fighting against its own nature",
+                "Conformist following established patterns exactly",
+                
+                "Traditionalist preserving ancient ways of killing",
+                "Progressive adapting to modern world",
+                "Conservative clinging to old methods",
+                "Optimist believing its actions serve good purpose",
+                
+                "Idealist pursuing perfect kill or victim",
+                "Pragmatist doing what works efficiently",
+                
+                "Insomniac never resting always hunting",
+                
+                "Communicative talking constantly to victims",
+                "Silent never making sound while killing",
+                "Poetic speaking in verse and metaphor",
+                
+                "Sarcastic mocking victims as they die"
+            ],
+            setting: [
+                "Ruined castle overtaken by creeping black vines",
+                "Burned-down church where ghostly hymns still echo",
+                "Collapsed cathedral buried beneath a modern city",
+                "Crimson forest where the trees bleed when cut",
+                "Forgotten mine shaft filled with bones and broken lanterns",
+                "Frozen wasteland haunted by the screams of the wind",
+                "Subterranean labyrinth carved from black stone and flesh",
+                "Desert ruins swallowed by endless sand and silence",
+                "Swamp of perpetual dusk where the water reflects faces of the dead",
+                "Abandoned research facility humming with strange power",
+                "Cursed village that reappears only under a blood moon",
+                "Endless hallway of mirrors that show alternate realities",
+                "Temple floating in the clouds, built for gods that no longer exist",
+                "Orbiting ruin of an ancient alien ark drifting through space",
+                "Cursed dream realm shared by the insane and the dead",
+                "Celestial library where books write themselves in living ink",
+                "Digital afterlife corrupted by the souls of extinct AIs",
+                "Endless stairwell descending through layers of forgotten time",
+                "Abandoned asylum with corridors that shift and change",
+                "Fog-shrouded graveyard where the dead whisper warnings",
+                "Ancient cathedral ruins beneath which darker things dwell",
+                "Cursed forest where trees bleed and shadows move independently",
+                "Derelict space station drifting through the cosmic void",
+                "Deep ocean trench where pressure and darkness reign eternal",
+                "Decaying carnival grounds frozen in perpetual midnight",
+                "Mirror realm accessible only through reflections at certain hours",
+                "Subterranean laboratory complex filled with failed experiments",
+                "Burned village that exists simultaneously in past and present",
+                "Abandoned shopping mall echoing with ghostly commerce",
+                "Underground catacombs stretching beneath an entire city",
+                "Decommissioned nuclear power plant leaking otherworldly energy",
+                "Overgrown botanical garden where plants have become predatory",
+                "Sunken city visible only during lowest tides",
+                "Psychiatric hospital where the patients never left",
+                "Collapsed subway system forming a maze beneath streets",
+                "Quarantined zone where biological experiments went wrong",
+                "Ancient battlefield where the dead still wage war",
+                "Lighthouse on an island that doesn't appear on maps",
+                "Opera house where performances never ended",
+                "Hotel where guests check in but never leave",
+                "Slaughterhouse that processed more than just animals",
+                "Prison where the guards became the imprisoned",
+                "Observatory that gazed too long into the abyss",
+                "Theater showing films that predict deaths",
+                "Museum where exhibits come alive at night",
+                "School where children's laughter echoes eternally",
+                "Orphanage where innocence was systematically destroyed"
+                
+],
+signature: [
+                "Leaves behind symbols carved into stone or flesh wherever it kills",
+                "Whispers the victim's name moments before appearing",
+                "Always accompanied by a faint childlike laughter echoing from nowhere",
+                "Its arrival dims all nearby lights, no matter the source",
+                "Victims' eyes turn black and weep ash before death",
+                "Carries a faint scent of burned roses and wet earth",
+                "Summons flocks of crows that scatter when it's near",
+                "Collects eyes and strings them together as trophies",
+                "Footsteps echo long after it's gone, out of sync with movement",
+                "Blood turns to dust wherever it walks",
+                "Always leaves behind a single feather soaked in black ichor",
+                "Writes cryptic messages in the victim's own handwriting",
+                "Freezes reflections in mirrors, leaving images that move independently",
+                "Victims vanish completely, leaving only shadows burnt into walls",
+                "Marks its prey with a sigil that burns under moonlight",
+                "Always sings softly before striking, the tune changing each kill",
+                "Leaves claw marks in perfect circular patterns around bodies",
+                "Victims are found smiling, as if welcoming death",
+                "Appears only in reflections before manifesting in reality",
+                "Feeds but leaves no wounds, only an expression of terror",
+                "Its shadow moves independently, sometimes attacking first",
+                "Survivors claim to hear their own voices calling them toward it",
+                "Leaves trails of frost or burning embers depending on mood",
+                "Leaves carved runes in the flesh of victims",
+                "Collects the eyes of those it kills, preserving them in jars",
+                "Replaces victims with wooden dolls in their exact likeness",
+                "Draws circles of ash around murder sites",
+                "Drains all color from the area, leaving only grayscale",
+                "Leaves behind black feathers that burn to the touch",
+                "Arranges bones into intricate geometric patterns",
+                "Writes prophecies in blood on nearby walls",
+                "Steals one specific item from each victim like lockets or photographs",
+                "Victims found with expressions of pure terror frozen on faces",
+                "Leaves a single playing card at each scene",
+                "Plants flowers that grow from victim's wounds",
+                "Victims' final screams echo eternally at the location",
+                "Leaves behind hourglasses with sand running backward",
+                "Carves dates into nearby surfaces predicting future deaths",
+                "Victims age rapidly before death, becoming ancient",
+                "Leaves coins over victims' eyes from currencies that don't exist",
+                "Bodies positioned to point toward its next target",
+                "Leaves cryptic poetry written in strange languages",
+                "Victims' hair turns pure white instantly",
+                "Leaves behind children's toys at murder scenes",
+                "Marks locations with specific flowers that bloom out of season",
+                "Victims found clutching photos of themselves already dead",
+                "Leaves behind perfect ice sculptures of its victims",
+                "Writes victim's name backwards in their own blood",
+                "Leaves behind music boxes that play haunting melodies",
+                "Victims found with mouths sewn shut with golden thread",
+                "Marks kill sites with specific constellations in blood",
+                "Leaves behind dolls with one eye matching each victim",
+                "Victims found holding letters they wrote predicting their death",
+                "Leaves behind mirrors cracked in specific patterns",
+                "Victims discovered with strange surgical modifications",
+                "Marks sites with candles that burn with black flames",
+                "Leaves behind photographs showing victim's final moments",
+                "Bodies found with pockets full of ash and bone fragments",
+                "Victims wear masks they don't remember putting on",
+                "Leaves behind clocks stopped at exact time of death",
+                "Marks territory with specific animal skulls",
+                "Victims found with their hearts replaced by stones",
+                "Leaves behind origami figures folded from human skin",
+                "Marks sites with specific chemical compounds",
+                "Victims found holding keys to locks that don't exist",
+                "Leaves behind portraits that age while subject remains young",
+                "Victims discovered with their names tattooed backwards",
+                "Marks locations with specific mathematical equations",
+                "Leaves behind glass spheres containing swirling mist",
+                "Victims found with mouths full of specific flowers",
+                "Marks sites with footprints that lead nowhere",
+                "Leaves behind recordings of conversations that never happened",
+                "Victims discovered with maps to their own location",
+                "Marks territory with specific musical notes played backwards",
+                "Leaves behind books with victim's biography already written",
+                "Victims found wearing masks of their own faces",
+                "Marks sites with specific gemstones left in patterns",
+                "Leaves behind hourglass tattoos that count down on victim's skin",
+                "Victims discovered with their shadows permanently detached",
+                "Marks locations with specific herbs from extinct plants",
+                "Leaves behind compasses pointing toward future victims",
+                "Victims found holding letters written in their own future handwriting",
+                "Marks sites with specific star charts from impossible dates",
+                "Leaves behind vials containing victim's final breath",
+                "Victims discovered with prophecies written on their bones",
+                "Marks territory with specific scents only certain people can detect",
+                "Leaves behind paintings showing victim's death before it occurs",
+                "Victims found with specific insects emerging from wounds",
+                "Marks sites with echoes that repeat victim's final words",
+                
+                "Victims discovered with their reflections reversed",
+                "Marks locations with temperature anomalies that spell words",
+                "Leaves behind ash that falls upward at kill sites",
+                
+                
+                "Leaves behind victims who age backward until they vanish",
+                "Victims discovered with their DNA rewritten into messages",
+                "Marks sites where gravity behaves strangely",
+                "Leaves behind evidence that victim never existed",
+                "Victims found in locations they couldn't have reached",
+                "Marks territory with specific wavelengths of light",
+                "Leaves behind teeth arranged in perfect spirals",
+                "Victims found with their last words carved into their skin",
+                "Marks sites with blood that remains liquid indefinitely",
+                
+                "Victims discovered wrapped in spider silk",
+                
+                "Leaves behind rosary beads made from vertebrae",
+                
+                "Marks territory with handprints that appear in impossible places",
+                "Leaves behind polaroids showing moments before death",
+                "Victims discovered with their fingerprints completely removed",
+                "Marks sites with specific chemical reactions that spell names"
+            ]}
+       const namePrefixes = [
+            "Mor", "Zar", "Kael", "Vex", "Dra", "Nym", "Vor", "Ash", "Xer", "Vel", 
+            "Gor", "Thal", "Nyx", "Vyr", "Ray", "Glam", "Xal", "Mal", "Gri", "Skar",
+            "Tor", "Nex", "Bale", "Zeph", "Kro", "Vos", "Rax", "Thul", "Mor", "Azra",
+            "Bran", "Cael", "Drak", "Eldr", "Fang", "Ghor", "Hel", "Ix", "Jor", "Kry",
+            "Laz", "Mord", "Nar", "Orn", "Phel", "Qua", "Raz", "Syl", "Tyr", "Ul",
+            "Val", "Wrath", "Xan", "Yor", "Zul", "Ath", "Blight", "Crim", "Dreth", "Eth",
+            "Fel", "Grav", "Hex", "Infern", "Kal", "Leth", "Mael", "Neth", "Obsi", "Phan",
+            "Quel", "Rav", "Shad", "Tar", "Urth", "Vorn", "Wraith", "Xor", "Yth", "Zor"
+        ];
+        
+        const nameSuffixes = [
+            "oth", "ath", "eth", "rath", "vorn", "thir", "gorn", "kar", "dros", "ion", 
+            "ax", "ul", "or", "is", "en", "ar", "os", "us", "ix", "ex",
+            "rik", "mon", "dar", "thor", "grim", "bane", "rok", "mar", "dor", "ven",
+            "ash", "ius", "ael", "orn", "yr", "al", "on", "ak", "ur", "ir",
+            "ok", "uk", "ek", "ik", "an", "in", "un", "yn", "as", "es",
+            "og", "ag", "ig", "ug", "om", "am", "im", "um", "el", "ol",
+            "ab", "ib", "ob", "ub", "ad", "id", "od", "ud", "af", "if",
+            "og", "akor", "imus", "arak", "enos", "uul", "azor", "ithis", "oron", "azar"
+        ];
+        
+        const titles = [
+            "The Warden of Echoes", "The Shattered Choir", "Queen of Rust", "The Hollowed Prophet",
+            "Bringer of Silence", "The Eternal Mourner", "Devourer of Light", "The Crimson Shepherd",
+            "Keeper of Forgotten Names", "The Thirsting Shadow", "The Pale Witness", "Harbinger of Ash",
+            "The Bleeding Crown", "Soul Render", "The Void Walker", "Nightmare's Edge",
+            "The Bone Collector", "Whisper of Madness", "The Forsaken King", "Dread Empress",
+            "The Carrion Lord", "Herald of Ruin", "The Dark Watcher", "Banshee Queen",
+            "The Cursed One", "Master of Torment", "The Fallen Star", "Prince of Shadows",
+            "The Blighted", "Chaos Incarnate", "The Nameless Horror", "Death's Herald",
+            "The Undying", "Plague Bringer", "The Wretched", "Lord of Despair",
+            "The Vengeful", "Midnight's Terror", "The Accursed", "Spawn of Darkness",
+            "The Corrupted", "Fear Itself", "The Desecrator", "Bane of Light",
+            "The Twisted", "Essence of Dread", "The Malformed", "Avatar of Suffering",
+            "The Withered", "Echo of Screams", "The Shunned", "Architect of Nightmares",
+            "The Exiled", "Scourge of Hope", "The Damned One", "Wraith King",
+            "The Lost Soul", "Tyrant of Blood", "The Doomed", "Monarch of Madness",
+            "The Broken", "Sovereign of Sorrow", "The Tormented", "Emperor of Emptiness"
+        ];
 
-"Collapsed cathedral buried beneath a modern city",
-   "Crimson forest where the trees bleed when cut",
-    "Forgotten mine shaft filled with bones and broken lanterns",
-    "Frozen wasteland haunted by the screams of the wind",
-    "Subterranean labyrinth carved from black stone and flesh",
-    "Desert ruins swallowed by endless sand and silence",
-    "Swamp of perpetual dusk where the water reflects faces of the dead",
- "Abandoned research facility humming with strange power",
-    "Cursed village that reappears only under a blood moon",
-    "Endless hallway of mirrors that show alternate realities",
-"A Temple floating in the clouds, built for gods that no longer exist",
-"Orbiting ruin of an ancient alien ark drifting through space",
-"Cursed dream realm shared by the insane and the dead",
-    "Celestial library where books write themselves in living ink",
-    "Digital afterlife corrupted by the souls of extinct AIs",
-    "Endless stairwell descending through layers of forgotten time",
-"Abandoned asylum with corridors that shift and change","Fog-shrouded graveyard where the dead whisper warnings","Ancient cathedral ruins beneath which darker things dwell","Cursed forest where trees bleed and shadows move independently","Derelict space station drifting through the cosmic void","Deep ocean trench where pressure and darkness reign eternal","Decaying carnival grounds frozen in perpetual midnight","Mirror realm accessible only through reflections at certain hours","Subterranean laboratory complex filled with failed experiments","Burned village that exists simultaneously in past and present"],
-            signature: [ "Leaves behind symbols carved into stone or flesh wherever it kills",
-    "Whispers the victim’s name moments before appearing",
-    "Always accompanied by a faint childlike laughter echoing from nowhere",
-    "Its arrival dims all nearby lights, no matter the source",
-    "Victims’ eyes turn black and weep ash before death",
-    "Carries a faint scent of burned roses and wet earth",
-    "Summons flocks of crows that scatter when it’s near",
-    "Collects eyes and strings them together as trophies",
-    "Footsteps echo long after it’s gone, out of sync with movement",
-    "Blood turns to dust wherever it walks",
-    "Always leaves behind a single feather soaked in black ichor",
-    "Writes cryptic messages in the victim’s own handwriting",
-    "Freezes reflections in mirrors, leaving images that move independently",
-    
-    
-    
-    "Victims vanish completely, leaving only shadows burnt into walls",
-    "Marks its prey with a sigil that burns under moonlight",
-    "Always sings softly before striking, the tune changing each kill",
-    
-    "Leaves claw marks in perfect circular patterns around bodies",
-    "Victims are found smiling, as if welcoming death",
-    "Appears only in reflections before manifesting in reality",
-  
-    "Feeds but leaves no wounds, only an expression of terror",
-    "Its shadow moves independently, sometimes attacking first",
-    "Survivors claim to hear their own voices calling them toward it",
-    "Leaves trails of frost or burning embers depending on mood",
-    ,"Leaves carved runes in the flesh of victims","Collects the eyes of those it kills, preserving them in jars","Replaces victims with wooden dolls in their exact likeness","Draws circles of ash around murder sites","Drains all color from the area, leaving only grayscale","Leaves behind black feathers that burn to the touch","Arranges bones into intricate geometric patterns","Writes prophecies in blood on nearby walls","Steals one specific item from each victim like lockets or photographs","Victims found with expressions of pure terror frozen on faces"]
-        };
-
-        const namePrefixes = ["Mor","Zar","Kael","Vex","Dra","Nym","Vor","Ash","Xer","Vel","Gor","Thal","Nyx","Vyr", "Ray", "Glam", "Xal",];
-        const nameSuffixes = ["oth","ath","eth","rath","vorn","thir","gorn","kar","dros","ion","ax","ul","or","is"];
-        const titles = ["The Warden of Echoes","The Shattered Choir","Queen of Rust","The Hollowed Prophet","Bringer of Silence","The Eternal Mourner","Devourer of Light","The Crimson Shepherd","Keeper of Forgotten Names","The Thirsting Shadow","The Pale Witness","Harbinger of Ash","The Bleeding Crown"];
+        // Extended creature-specific name parts for even MORE variety
+        const vampireNames = ["Vlad", "Carmilla", "Nos", "Striga", "Sanguis", "Noctis"];
+        const demonNames = ["Baal", "Beleth", "Azaz", "Abaddon", "Moloch", "Lilith"];
+        const ghostNames = ["Spectra", "Phantom", "Wraith", "Shade", "Wisp", "Echo"];
+        const werewolfNames = ["Fenris", "Luna", "Fang", "Howl", "Savage", "Beast"];
+        const undeadNames = ["Mort", "Lich", "Grave", "Tomb", "Rot", "Crypt"];
 
         let currentTraits = {category:null,physical:null,origin:null,powers:null,weakness:null,personality:null,setting:null,signature:null};
         let currentName = "";
@@ -826,25 +1350,118 @@
         }
 
         function rollTrait(trait) {
-            const data = creatureData[trait];
-            const random = data[Math.floor(Math.random() * data.length)];
-            currentTraits[trait] = random;
-            document.getElementById(`${trait}-value`).textContent = random;
+            const valueElement = document.getElementById(`${trait}-value`);
+            const button = event.target;
+            
+            // Add rolling animation
+            valueElement.classList.add('rolling');
+            button.classList.add('rolling');
+            
+            // Simulate slot machine effect with multiple rapid changes
+            let rollCount = 0;
+            const rollInterval = setInterval(() => {
+                const data = creatureData[trait];
+                const tempRandom = data[Math.floor(Math.random() * data.length)];
+                valueElement.textContent = tempRandom;
+                rollCount++;
+                
+                if (rollCount >= 8) {
+                    clearInterval(rollInterval);
+                    
+                    // Final value
+                    const finalValue = data[Math.floor(Math.random() * data.length)];
+                    currentTraits[trait] = finalValue;
+                    valueElement.textContent = finalValue;
+                    
+                    // Remove rolling, add rolled state
+                    setTimeout(() => {
+                        valueElement.classList.remove('rolling');
+                        valueElement.classList.add('rolled');
+                        button.classList.remove('rolling');
+                    }, 100);
+                }
+            }, 80);
         }
 
         function rollAll() {
-            Object.keys(creatureData).forEach(trait => rollTrait(trait));
+            const traits = Object.keys(creatureData);
+            let delay = 0;
+            
+            traits.forEach((trait, index) => {
+                setTimeout(() => {
+                    const valueElement = document.getElementById(`${trait}-value`);
+                    const button = valueElement.nextElementSibling;
+                    
+                    // Add rolling animation
+                    valueElement.classList.add('rolling');
+                    if (button) button.classList.add('rolling');
+                    
+                    // Simulate slot machine
+                    let rollCount = 0;
+                    const rollInterval = setInterval(() => {
+                        const data = creatureData[trait];
+                        const tempRandom = data[Math.floor(Math.random() * data.length)];
+                        valueElement.textContent = tempRandom;
+                        rollCount++;
+                        
+                        if (rollCount >= 8) {
+                            clearInterval(rollInterval);
+                            
+                            const finalValue = data[Math.floor(Math.random() * data.length)];
+                            currentTraits[trait] = finalValue;
+                            valueElement.textContent = finalValue;
+                            
+                            setTimeout(() => {
+                                valueElement.classList.remove('rolling');
+                                valueElement.classList.add('rolled');
+                                if (button) button.classList.remove('rolling');
+                            }, 100);
+                        }
+                    }, 80);
+                }, delay);
+                
+                delay += 150; // Stagger each roll
+            });
         }
 
         function generateName() {
-            const useTitle = Math.random() < 0.3;
+            const useTitle = Math.random() < 0.3; // 30% chance for title
+            
             if (useTitle) {
                 currentName = titles[Math.floor(Math.random() * titles.length)];
             } else {
-                const prefix = namePrefixes[Math.floor(Math.random() * namePrefixes.length)];
+                // Check creature category for themed names
+                const category = currentTraits.category ? currentTraits.category.toLowerCase() : '';
+                let specialPrefix = null;
+                
+                // 40% chance to use category-specific name part
+                if (Math.random() < 0.4) {
+                    if (category.includes('vampire')) {
+                        specialPrefix = vampireNames[Math.floor(Math.random() * vampireNames.length)];
+                    } else if (category.includes('demon') || category.includes('hellspawn')) {
+                        specialPrefix = demonNames[Math.floor(Math.random() * demonNames.length)];
+                    } else if (category.includes('ghost') || category.includes('spirit') || category.includes('phantom')) {
+                        specialPrefix = ghostNames[Math.floor(Math.random() * ghostNames.length)];
+                    } else if (category.includes('were') || category.includes('shapeshifter')) {
+                        specialPrefix = werewolfNames[Math.floor(Math.random() * werewolfNames.length)];
+                    } else if (category.includes('undead') || category.includes('lich') || category.includes('zombie')) {
+                        specialPrefix = undeadNames[Math.floor(Math.random() * undeadNames.length)];
+                    }
+                }
+                
+                // Build the name
+                const prefix = specialPrefix || namePrefixes[Math.floor(Math.random() * namePrefixes.length)];
                 const suffix = nameSuffixes[Math.floor(Math.random() * nameSuffixes.length)];
-                currentName = prefix + suffix;
+                
+                // 20% chance for double-barreled name (like "Mor-Thalix")
+                if (Math.random() < 0.2) {
+                    const prefix2 = namePrefixes[Math.floor(Math.random() * namePrefixes.length)];
+                    currentName = prefix + '-' + prefix2 + suffix;
+                } else {
+                    currentName = prefix + suffix;
+                }
             }
+            
             document.getElementById('creature-name-input').value = currentName;
         }
 
@@ -939,9 +1556,12 @@
         }
 
         async function generateImageHuggingFace(prompt) {
-            console.log('🎨 Generating image with Hugging Face...');
+            // Randomly select a model for variety and quality
+            const selectedModel = IMAGE_MODELS[Math.floor(Math.random() * IMAGE_MODELS.length)];
+            console.log(`🎨 Generating image with ${selectedModel}...`);
+            
             try {
-                const response = await fetch(`https://api-inference.huggingface.co/models/${HF_IMAGE_MODEL}`, {
+                const response = await fetch(`https://api-inference.huggingface.co/models/${selectedModel}`, {
                     method: 'POST',
                     headers: {'Authorization': `Bearer ${HF_API_KEY}`, 'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -986,9 +1606,21 @@
             
             const unrolled = Object.values(currentTraits).filter(v => v === null);
             if (unrolled.length > 0) {
+                // Shake animation on unrolled traits
+                Object.keys(currentTraits).forEach(trait => {
+                    if (currentTraits[trait] === null) {
+                        const section = document.getElementById(`${trait}-value`).closest('.trait-section');
+                        section.classList.add('shake');
+                        setTimeout(() => section.classList.remove('shake'), 400);
+                    }
+                });
                 alert('Please roll all traits before creating your creature!');
                 return;
             }
+
+            // Add pulsing animation to create button
+            const createBtn = document.querySelector('.create-btn');
+            createBtn.classList.add('creating');
 
             const imageContainer = document.getElementById('image-container');
             imageContainer.innerHTML = '<div class="loading-animation"></div>';
@@ -1005,6 +1637,7 @@
                 img.alt = currentName;
                 img.onload = () => {
                     imageContainer.innerHTML = '';
+                    createBtn.classList.remove('creating');
                     imageContainer.appendChild(img);
                     if (document.getElementById('result').classList.contains('active')) {
                         document.getElementById('result-image').src = currentImage;
@@ -1021,6 +1654,7 @@
                 img.alt = currentName;
                 img.onload = () => {
                     imageContainer.innerHTML = '';
+                    createBtn.classList.remove('creating');
                     imageContainer.appendChild(img);
                     if (document.getElementById('result').classList.contains('active')) {
                         document.getElementById('result-image').src = currentImage;
@@ -1028,6 +1662,7 @@
                 };
                 img.onerror = () => {
                     imageContainer.innerHTML = '<span class="placeholder-text">Failed. Try again.</span>';
+                    createBtn.classList.remove('creating');
                 };
             }
 
@@ -1100,7 +1735,10 @@
             document.getElementById('result').classList.remove('active');
             document.getElementById('creator').classList.add('active');
             Object.keys(currentTraits).forEach(key => currentTraits[key] = null);
-            document.querySelectorAll('.trait-value').forEach(el => el.textContent = 'Click roll to begin...');
+            document.querySelectorAll('.trait-value').forEach(el => {
+                el.textContent = 'Click roll to begin...';
+                el.classList.remove('rolled', 'rolling');
+            });
             document.getElementById('creature-name-input').value = '';
             document.getElementById('image-container').innerHTML = '<span class="placeholder-text">Your creature awaits...</span>';
             document.getElementById('regenerate-btn').style.display = 'none';
